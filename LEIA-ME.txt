@@ -1,0 +1,22 @@
+GESTÃO DA GRÁFICA — PACOTE PWA
+
+O pacote contém a versão HTML com suporte PWA e os arquivos do aplicativo instalável.
+
+ARQUIVOS
+- index.html: programa com metadados PWA e registro do Service Worker.
+- manifest.webmanifest: nome, ícones, escopo e modo standalone.
+- service-worker.js: cache básico para permitir abrir o app quando estiver offline após o primeiro acesso.
+- icons/: ícones 192x192 e 512x512.
+
+PUBLICAÇÃO NO GITHUB PAGES
+1. Faça backup do repositório antes de substituir qualquer arquivo.
+2. Na mesma pasta publicada atualmente pelo GitHub Pages, coloque index.html, manifest.webmanifest, service-worker.js e a pasta icons/.
+3. O index.html deste pacote deve substituir o index.html atualmente publicado. Se o arquivo principal do repositório tiver outro nome, ajuste o nome com cuidado para que a página inicial continue sendo index.html.
+4. Aguarde o GitHub Pages publicar e abra o endereço do site no Chrome Android.
+5. Atualize a página. No Chrome, use o menu ⋮ e procure “Instalar app” ou “Adicionar à tela inicial”.
+
+IMPORTANTE SOBRE OS DADOS
+O programa continua usando localStorage e IndexedDB no mesmo domínio. Não limpe os dados do site nem troque de domínio. Antes da publicação, baixe um backup dentro de Configurações > Backup.
+
+OBSERVAÇÃO
+O Service Worker faz cache do shell do app. Dados e arquivos cadastrados continuam armazenados pelo navegador; o cache PWA não é backup desses dados.

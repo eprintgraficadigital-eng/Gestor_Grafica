@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#16212b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>Gestão da Gráfica</title>
 <style>
 :root{--bg:#eef1f4;--pan:#fff;--ink:#16212b;--mut:#66727e;--line:#d5dbe1;--acc:#1b4f8a;--acc2:#e8eef6}
@@ -316,4 +322,14 @@ async function exp(){const a=document.createElement('a');a.href=URL.createObject
 function imp(f){if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(!d.orc||!d.cli)throw 0;if(!confirm('Substituir os dados atuais pelo backup?'))return;const fl=d._files||{};delete d._files;db=norm(d);save();await fclr();for(const k in fl)await fput(k,fl[k]);render()}catch(e){alert('Arquivo de backup inválido.')}};r.readAsText(f)}
 async function zerar(){if(!confirm('Isso apaga TODOS os dados (clientes, itens, pedidos, artes e configurações). Um backup será baixado antes. Continuar?'))return;if(prompt('Para confirmar, digite ZERAR:')!=='ZERAR')return;await exp();localStorage.removeItem(K);await fclr();db=fresh();tab='orc';po=null;render()}
 render();
-</script></body></html>
+</script>
+<script>
+// Registro PWA: não altera os dados nem a lógica do Gestão da Gráfica.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      .catch(err => console.error('Falha ao registrar o modo offline:', err));
+  });
+}
+</script>
+</body></html>
