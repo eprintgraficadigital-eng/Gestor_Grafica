@@ -2,14 +2,14 @@
   "id": "./",
   "name": "Gestão da Gráfica",
   "short_name": "Gestão Gráfica",
-  "description": "Sistema de vendas, orçamentos, pedidos e clientes da gráfica.",
+  "description": "Sistema de gestão de vendas, orçamentos, produtos, estoque, pedidos e clientes para gráfica.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#eef1f4",
-  "theme_color": "#16212b",
+  "background_color": "#eef2f7",
+  "theme_color": "#172b4d",
   "icons": [
     {
       "src": "./icons/icon-192.png",

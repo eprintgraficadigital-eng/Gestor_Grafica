@@ -1,5 +1,5 @@
-const CACHE_NAME = 'gestao-grafica-pwa-v1';
-const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+const CACHE_NAME = 'gestao-grafica-pwa-v3';
+const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './styles.css', './app.js', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {

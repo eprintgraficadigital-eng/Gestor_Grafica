@@ -1,12 +1,78 @@
-GESTÃO DA GRÁFICA
+GESTÃO DA GRÁFICA — VERSÃO 3.0
+================================
 
-O pacote contém a versão HTML com suporte PWA e os arquivos do aplicativo instalável.
+Nova interface
+--------------
+- Identidade visual em azul-marinho e cinza-claro.
+- Cantos mais arredondados, cartões e controles com espaçamento ampliado.
+- Navegação lateral e layout responsivo para computador e celular.
+- Produtos, Kits e Fornecedores organizados em abas dentro da área Produtos.
 
-ARQUIVOS
-- index.html: programa com metadados PWA e registro do Service Worker.
-- manifest.webmanifest: nome, ícones, escopo e modo standalone.
-- service-worker.js: cache básico para permitir abrir o app quando estiver offline após o primeiro acesso.
-- icons/: ícones 192x192 e 512x512.
+Organização dos arquivos
+------------------------
+- index.html: estrutura principal da aplicação.
+- styles.css: estilos e identidade visual.
+- app.js: lógica de vendas, orçamentos, clientes, produtos, kits, fornecedores,
+  pedidos, produção, documentos, estatísticas e configurações.
+- service-worker.js: cache e funcionamento offline do PWA.
+- manifest.webmanifest: instalação como aplicativo.
+- icons/: ícones do aplicativo.
 
-IMPORTANTE SOBRE OS DADOS
-O programa continua usando localStorage e IndexedDB no mesmo domínio. 
+Dados e segurança
+-----------------
+Os dados continuam armazenados localmente no navegador utilizado. Eles não são
+sincronizados automaticamente entre dispositivos. Faça um backup JSON em
+Configurações > Backup antes de atualizar, limpar dados do navegador ou trocar
+de computador.
+
+A nova versão mantém a chave de armazenamento da versão anterior para permitir
+a leitura dos cadastros existentes. O Service Worker usa um novo nome de cache
+para carregar os arquivos desta versão.
+
+Migração do estoque: produtos antigos com saldo zero e sem uma marcação de
+controle explícita passam a ser tratados como "Não usa estoque", para evitar
+baixas acidentais em produtos que nunca tiveram estoque cadastrado. Produtos
+com saldo positivo ou negativo preservam o controle. Se um produto antigo
+precisar controlar estoque mesmo começando em zero, abra seu cadastro e
+desmarque "Não usa estoque".
+
+Regras de estoque revisadas
+---------------------------
+- Produtos marcados como "Não usa estoque" não participam da movimentação.
+- Produtos com estoque registrado permitem saldo negativo, com aviso.
+- A necessidade é agrupada por produto antes de verificar estoque, inclusive
+  quando o mesmo produto aparece em mais de uma linha.
+- Componentes de kits são considerados na movimentação.
+- O primeiro pagamento do pedido e a conclusão da venda no PDV geram a baixa.
+- Estorno devolve a quantidade ao estoque.
+- Ao editar um pedido com estoque já baixado, o sistema aplica a diferença
+  entre a composição anterior e a nova.
+- Pedidos pagos ou com baixa de estoque não podem ser apagados; devem ser
+  estornados e preservados no histórico.
+
+Produtos
+--------
+- O cadastro preserva tipo de venda por unidade, m² ou lotes.
+- O cadastro por lotes permite manter várias faixas, com quantidade, venda,
+  promoção, custo e prazo próprios.
+- Markup pode calcular o preço de venda a partir do custo e percentual
+  configurado.
+
+Instalação / atualização
+------------------------
+1. Baixe e extraia todos os arquivos mantendo a estrutura de pastas.
+2. Publique a pasta em um servidor web ou abra pelo ambiente local que já
+   utiliza para a versão PWA.
+3. Faça backup dos dados antes da troca.
+4. Abra o sistema e confirme se os dados existentes foram carregados.
+5. Se o navegador mantiver arquivos antigos, feche e abra novamente o PWA
+   após o Service Worker concluir a atualização.
+
+Observação importante
+--------------------
+Esta versão foi revisada estaticamente e submetida a testes básicos de
+carregamento e navegação. Antes de usar em operação comercial, faça testes
+com cópia dos dados reais: criar orçamento, registrar primeiro pagamento,
+editar quantidade após baixa, concluir venda no PDV, vender kit, estornar e
+conferir os saldos. O sistema continua sendo local e não substitui um backup
+externo regular.
