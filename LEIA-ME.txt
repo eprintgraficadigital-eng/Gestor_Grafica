@@ -1,0 +1,42 @@
+GESTÃO DA GRÁFICA — PACOTE PWA
+
+O pacote contém a versão HTML com suporte PWA e os arquivos do aplicativo instalável.
+
+ARQUIVOS
+- index.html: programa com metadados PWA e registro do Service Worker.
+- manifest.webmanifest: nome, ícones, escopo e modo standalone.
+- service-worker.js: cache básico para permitir abrir o app quando estiver offline após o primeiro acesso.
+- icons/: ícones 192x192 e 512x512.
+
+PUBLICAÇÃO NO GITHUB PAGES
+1. Faça backup do repositório antes de substituir qualquer arquivo.
+2. Na mesma pasta publicada atualmente pelo GitHub Pages, coloque index.html, manifest.webmanifest, service-worker.js e a pasta icons/.
+3. O index.html deste pacote deve substituir o index.html atualmente publicado. Se o arquivo principal do repositório tiver outro nome, ajuste o nome com cuidado para que a página inicial continue sendo index.html.
+4. Aguarde o GitHub Pages publicar e abra o endereço do site no Chrome Android.
+5. Atualize a página. No Chrome, use o menu ⋮ e procure “Instalar app” ou “Adicionar à tela inicial”.
+
+IMPORTANTE SOBRE OS DADOS
+O programa continua usando localStorage e IndexedDB no mesmo domínio. Não limpe os dados do site nem troque de domínio. Antes da publicação, baixe um backup dentro de Configurações > Backup.
+
+OBSERVAÇÃO
+O Service Worker faz cache do shell do app. Dados e arquivos cadastrados continuam armazenados pelo navegador; o cache PWA não é backup desses dados.
+
+TELAS DO PROGRAMA (menu lateral)
+- Vendas: venda rápida de balcão (PDV) só com produtos "Sem produção (pronta entrega)"; histórico, cupom, recibo, estorno e exclusão.
+- Comercial: orçamentos (Ativos, Aberto, Aprovado, Recusado, Arquivado). "Aprovar" (ou o primeiro pagamento) transforma o orçamento em pedido com o mesmo número.
+- Pedidos: botão "+ Novo pedido" e lista própria (Todos, A receber, Pagos, Cancelados/estornados), com pagamentos, recibo e comprovante do pedido (PDF).
+- Produção: cartões por pedido com as etapas Aprovação de arte, Fila, Em produção, Acabamento, Finalizado, Pronto/Em rota e Entregue. A produção só é liberada quando a entrada alcança o percentual definido em Configurações (padrão 30%). Produtos sem produção são entregues junto com o pedido, depois que os de produção ficarem Finalizados.
+- Clientes: cadastro, busca e histórico de vendas, orçamentos e pedidos.
+- Produtos: produtos, kits e fornecedores.
+- Estatísticas: painel gerencial com filtro de período e de canal.
+- Configurações (lista lateral): dados da loja, taxas de entrega (editáveis), mensagens de status, produtos (código e markup), produção (entrada mínima), impressão e PDF, histórico geral por número e backup.
+- Calculadora: botão no topo, abre um painel na lateral direita.
+
+IMPRESSÃO E PDF
+Em Configurações > Impressão e PDF escolha o formato de cada documento: A4, A5, A6, bobina de 58 mm, bobina de 80 mm ou bobina personalizada. Documentos: cupom da venda, orçamento, recibo, comprovante do pedido e aprovação de arte. Teste na sua impressora e ajuste a largura da bobina se precisar. O PDF de aprovação de arte mostra no máximo duas páginas da arte (frente e verso). Para arte em PDF, o app baixa uma biblioteca de leitura na primeira vez (precisa de internet); arte em JPG ou PNG funciona sem isso.
+
+NÚMEROS DE REGISTRO
+Cada venda, orçamento e pedido recebe um número em ordem de criação, que nunca é reutilizado, mesmo se o registro for excluído. O histórico geral (Configurações) guarda todos os números. "Zerar tudo" apaga tudo e reinicia a numeração em 1.
+
+ATUALIZAÇÃO DO APLICATIVO
+Esta versão usa o cache "gestao-grafica-pwa-v3". Depois de publicar, abra o app com internet e feche e abra de novo para carregar a versão nova.
