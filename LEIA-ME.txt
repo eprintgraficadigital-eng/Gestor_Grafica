@@ -39,4 +39,14 @@ NÚMEROS DE REGISTRO
 Cada venda, orçamento e pedido recebe um número em ordem de criação, que nunca é reutilizado, mesmo se o registro for excluído. O histórico geral (Configurações) guarda todos os números. "Zerar tudo" apaga tudo e reinicia a numeração em 1.
 
 ATUALIZAÇÃO DO APLICATIVO
-Esta versão usa o cache "gestao-grafica-pwa-v3". Depois de publicar, abra o app com internet e feche e abra de novo para carregar a versão nova.
+Versão do programa: 2.3 (aparece em Configurações > Dados e backup). Esta versão usa o cache "gestao-grafica-pwa-v6". Depois de publicar, abra o app com internet e feche e abra de novo para carregar a versão nova.
+
+
+NOVIDADES DA VERSÃO 2.3 (Configurações > Dados e backup)
+- Login opcional com Google: o programa funciona com ou sem login. Logado, dados e artes vão para uma pasta oculta do app no seu Google Drive (sem custo).
+- Backup automático na conta: após alterações e a cada X minutos, só se houver diferença. Se a permissão do Google vencer, aparece o aviso "Backup pendente, toque para renovar".
+- Backup automático em arquivo (com ou sem conta): a cada X minutos, só se houver diferença. No computador (Chrome/Edge) dá para escolher uma pasta; no celular cada backup é um download novo. Só funciona com o programa aberto.
+- Zerar tudo: apaga o aparelho e o backup da conta, com duas confirmações (pergunta + digitar APAGAR).
+- Limpar neste aparelho: apaga só o aparelho e sai da conta.
+- Apagar backup da conta: remove só o backup do Drive, sem alterar o programa.
+- CONFIGURAÇÃO: antes de usar o login, coloque o Client ID do Google no index.html, na constante GCID (procure por COLE_AQUI_SEU_CLIENT_ID).

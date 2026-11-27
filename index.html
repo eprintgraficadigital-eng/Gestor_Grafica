@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="./icons/icon-512.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <title>Gestão da Gráfica</title>
 <style>
 :root{--bg:#eef1f4;--pan:#fff;--ink:#16212b;--mut:#66727e;--line:#d5dbe1;--acc:#1b4f8a;--acc2:#e8eef6}
@@ -50,7 +50,9 @@ dialog{width:min(840px,96vw);border:0;border-radius:10px;padding:16px}dialog::ba
 #print .big{font-size:17px;font-weight:bold;text-align:right}#print .bx{border:1px solid #999;padding:8px;margin:8px 0}}
 @media(max-width:720px){body{font-size:15px}#main{padding:8px}button,input,select,textarea{font-size:16px;min-height:40px}.g2{grid-template-columns:1fr}.it{grid-template-columns:1fr 1fr}.it .c1{grid-column:1/-1}.br{grid-template-columns:90px 1fr 84px}dialog{width:100vw;max-width:100vw;min-height:100vh;border-radius:0;padding:10px}.acts button{flex:1 1 auto}.ex input,.ex select{width:100%}}.pagehd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.pagehd h3{margin:0;font-size:18px}.pagehd button{font-size:18px;line-height:1;padding:6px 12px}
 #dq{max-width:1000px;margin:14px auto;padding:14px;background:var(--pan);border:1px solid var(--line);border-radius:8px}
-#dp,#dnp,#dd,#dx,#dtx{width:min(520px,96vw);min-height:0}
+#dp,#dnp,#dd,#dx,#dtx,#dpe{width:min(520px,96vw);min-height:0}
+.entb{background:#FFF6D6;border:2px solid #E0A800;border-radius:8px;padding:8px 10px;margin:12px 0}.entb>b{font-size:15px}
+.px .hd{display:flex;justify-content:space-between;gap:8px;cursor:pointer;align-items:center}
 #dnc,#dfo{width:min(640px,96vw);min-height:0;max-height:92vh;overflow:auto}#dpr{width:min(760px,96vw);min-height:0;max-height:92vh;overflow:auto}
 .cats{flex:0 0 190px;display:flex;flex-direction:column;gap:2px;background:var(--pan);border:1px solid var(--line);border-radius:8px;padding:6px}
 .cats button{display:block;width:100%;text-align:left;background:none;border:0;border-left:3px solid transparent;padding:7px 8px;border-radius:0 6px 6px 0}
@@ -78,15 +80,17 @@ dialog{width:min(840px,96vw);border:0;border-radius:10px;padding:16px}dialog::ba
 <div class="g2"><div><label>Cliente<select id="q-c"></select></label><button type="button" onclick="cliPop(null,'q')">+ Novo cliente</button></div><label>Data do orçamento<input type="date" id="q-d"></label></div>
 <div id="q-i" style="margin-top:8px"></div>
 <button onclick="addRow()">+ Produto</button>
-<div class="g2" style="margin-top:8px"><label class="nv">Entrega<select id="q-x" onchange="qt()"></select></label><label class="nv"><br><input type="checkbox" id="q-g" onchange="qt()"> Entrega grátis (promoção)</label>
+<div class="g2" style="margin-top:8px">
 <label>Desconto no pagamento à vista<select id="q-dv" onchange="dvSel()"><option value="5">5% (padrão)</option><option value="10">10%</option><option value="x">Outro valor (%)</option></select><input type="number" step="any" id="q-dv2" placeholder="% de desconto" hidden></label><label>Ajuste em R$ (use − para desconto em valor)<input type="number" step="any" id="q-a" oninput="qt()"></label>
 <label class="nv">Validade do orçamento (dias)<input type="number" id="q-v"></label><label class="nv">Previsão de produção (dias úteis)<input type="number" id="q-pv"></label></div>
+<div id="q-eh" class="nv"></div>
 <label>Observações<textarea id="q-o" rows="2"></textarea></label>
 <div id="q-pg"></div>
 <div class="row"><span><b>Total: <span id="q-t"></span></b><br><span class="mut" id="q-l"></span></span><span class="acts"><button onclick="qClose()">Fechar</button><button class="pri" onclick="saveQ()">Salvar</button></span></div></section></div></div>
 <dialog id="dp"></dialog>
 <dialog id="dd"></dialog>
 <dialog id="dtx"></dialog>
+<dialog id="dpe"></dialog>
 <dialog id="dx"></dialog>
 <aside id="calcp" hidden aria-label="Calculadora"><div class="pagehd"><h3>Calculadora</h3><button type="button" onclick="calcT()" aria-label="Fechar" title="Fechar">✕</button></div><div id="c-h" class="mut" style="min-height:18px;text-align:right"></div><div id="c-d" class="cd">0</div><div class="ck" id="c-k"></div><div class="acts" style="margin-top:10px"><button type="button" onclick="calcCp()">Copiar resultado</button></div></aside>
 <dialog id="dnc"></dialog>
@@ -116,7 +120,7 @@ function avs0(){return['A cor impressa pode variar de 5% a 10%, para mais ou par
 const hlog=(o,ev,tx,v)=>db.hist.push({n:o.n,ts:agora(),ev,tx:tx||'',v:v==null?null:v});
 function norm(d){d=Object.assign(fresh(),d);d.cfg=Object.assign({dig:4,mk:0,ent:30},d.cfg||{});d.cfg.fmt=Object.assign(fmt0(),d.cfg.fmt||{});if(!d.cfg.bw)d.cfg.bw=80;if(!d.cfg.avs)d.cfg.avs=avs0();if(d.cfg.rod==null)d.cfg.rod='Documento sem valor fiscal';d.par.forEach(p=>{if(!p.tipo)p.tipo='Parceira'});d.orc.forEach(o=>{o.it.forEach((r,i)=>{r.rid=r.rid||'r'+o.id+'_'+i;r.cu=r.cu||0;r.cpu=r.cpu||0});o.pays=o.pays||[];o.hp=o.hp||[];if(!o.venda&&o.ped===undefined)o.ped=o.pays.length&&!o.est&&!['recusado','arquivado'].includes(o.st)?1:0;if(o.dp){o.aj=rnd((+o.aj||0)-sub(o)*o.dp/100);delete o.dp}if(!o.ln){o.ln=[];sync(o);if(o.tl&&o.ln[0])o.ln[0].tl=o.tl;delete o.tl}if(!o.venda&&!o.ped&&o.conf&&!o.est&&!['recusado','arquivado'].includes(o.st))o.ped=1;if(o.tx&&!o.txv){const f=d.tx.find(x=>x.id==o.tx);if(f)o.txv={valor:f.valor,custo:f.custo}}(o.ln||[]).forEach(l=>{if(l.ex&&!l.exv){const f=d.tx.find(x=>x.id==l.ex);if(f)l.exv={valor:f.valor,custo:f.custo}}})});d.hist=d.hist||[];d.del=d.del||[];d.seq=Math.max(+d.seq||1,...d.orc.map(o=>o.n+1),...d.del.map(x=>x.n+1));return d}
 function load(){try{return norm(JSON.parse(localStorage.getItem(K))||{})}catch(e){return fresh()}}
-function save(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){alert('Não foi possível salvar. O armazenamento do navegador pode estar cheio.')}}
+function save(){try{localStorage.setItem(K,JSON.stringify(db))}catch(e){alert('Não foi possível salvar. O armazenamento do navegador pode estar cheio.')}if(typeof bkDirty=='function')bkDirty()}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=v=>(+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),fm=n=>(+n||0).toLocaleString('pt-BR',{maximumFractionDigits:2});
 const dt=d=>d?d.split('-').reverse().join('/'):'',hoje=()=>new Date().toLocaleDateString('sv'),agora=()=>new Date().toLocaleString('pt-BR');
@@ -125,9 +129,9 @@ const phone=p=>{let d=(p||'').replace(/\D/g,'');return d.length<=11?'55'+d:d};
 const addD=(d,n)=>{const x=new Date(d+'T12:00');x.setDate(x.getDate()+n);return x.toLocaleDateString('sv')};
 const addDU=(d,n)=>{const x=new Date(d+'T12:00');while(n>0){x.setDate(x.getDate()+1);if(x.getDay()%6)n--}return x.toLocaleDateString('sv')};
 const rnd=v=>Math.round(v*100)/100,dv=o=>o.dv!=null?o.dv:5,gdv=()=>$('#q-dv').value=='x'?(+$('#q-dv2').value||0):+$('#q-dv').value;const later=f=>setTimeout(f,0);
-const sub=o=>o.it.reduce((a,r)=>a+r.t,0),entV=o=>o.gr?0:(o.txv?o.txv.valor:txx(o.tx).valor),extra=o=>(o.ln||[]).reduce((a,l)=>a+(l.ex?(l.exv?l.exv.valor:txx(l.ex).valor):0),0);
-const dsc=o=>(o.pays||[]).reduce((a,p)=>a+(p.ds||0),0),tot=o=>sub(o)+(+o.aj||0)+entV(o)+extra(o)-dsc(o)-(+o.rf||0),paid=o=>(o.pays||[]).reduce((a,p)=>a+p.v,0);
-const cost=o=>o.it.reduce((a,r)=>a+(r.cu||0),0)+(o.tx?((o.txv?o.txv.custo:txx(o.tx).custo)||0):0)+(o.ln||[]).reduce((a,l)=>a+(l.ex?((l.exv?l.exv.custo:txx(l.ex).custo)||0):0),0),lucro=o=>tot(o)-cost(o);
+const sub=o=>o.it.reduce((a,r)=>a+r.t,0),entV=o=>o.gr||o.ed?0:(o.txv?(+o.txv.valor||0):txx(o.tx).valor),extra=o=>(o.ln||[]).reduce((a,l)=>a+(l.ex?(l.exv?l.exv.valor:txx(l.ex).valor):0),0);
+const dsc=o=>(o.pays||[]).reduce((a,p)=>a+(p.ds||0),0),base=o=>sub(o)+(+o.aj||0)+entV(o)+extra(o)-dsc(o),rfe=o=>{const rf=+o.rf||0;if(!rf)return 0;const pp=(o.pays||[]).reduce((a,p)=>a+(p.v>0?p.v:0),0);return Math.max(0,rf-Math.max(0,pp-base(o)))},tot=o=>base(o)-rfe(o),hasEnt=o=>!!(o.tx||o.txv||o.gr||o.ed),paid=o=>(o.pays||[]).reduce((a,p)=>a+p.v,0);
+const cost=o=>o.it.reduce((a,r)=>a+(r.cu||0),0)+(o.ed?0:(o.txv?(+o.txv.custo||0):(o.tx?(+txx(o.tx).custo||0):0)))+(o.ln||[]).reduce((a,l)=>a+(l.ex?((l.exv?l.exv.custo:txx(l.ex).custo)||0):0),0),lucro=o=>tot(o)-cost(o);
 const prevD=o=>o.conf?dt(addDU(o.conf,o.prev||0)):(o.prev||0)+' dias úteis';
 const ent=()=>{const n=db.cfg&&db.cfg.ent;return n==null||n===''?30:Math.max(0,Math.min(100,+n||0))},pl=o=>(o.ln||[]).filter(l=>!l.np),unl=o=>tot(o)>0&&(ent()<=0||(paid(o)>0&&paid(o)>=tot(o)*ent()/100-.005)),done=o=>{const p=pl(o);return o.ln.length>0&&(p.length?p.every(l=>l.tl.length>=7):o.ln.every(l=>l.ent))};
 const labs=l=>[...ET.slice(0,5),l.modo=='entrega'?'Em rota de entrega':'Pronto para retirada','Entregue/Retirado'];
@@ -141,6 +145,35 @@ async function fput(k,v){const d=await idb();return new Promise(s=>{const t=d.tr
 async function fget(k){const d=await idb();return new Promise(s=>{const r=d.transaction('f').objectStore('f').get(k);r.onsuccess=()=>s(r.result)})}
 async function fall(){const d=await idb(),o={};return new Promise(s=>{const r=d.transaction('f').objectStore('f').openCursor();r.onsuccess=()=>{const c=r.result;if(c){o[c.key]=c.value;c.continue()}else s(o)}})}
 async function fclr(){const d=await idb();return new Promise(s=>{const t=d.transaction('f','readwrite');t.objectStore('f').clear();t.oncomplete=s})}
+/* BACKUP NA CONTA GOOGLE (DRIVE) E BACKUP AUTOMÁTICO - v2.3 */
+const GCID='COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com',GSC='https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email',BKF='gestao-grafica-backup.json',DA='https://www.googleapis.com/drive/v3/files',DU='https://www.googleapis.com/upload/drive/v3/files';
+const BK=Object.assign({auto:false,min:15,arq:false,amin:30,email:'',hd:'',hf:'',ts:0,tsf:0,tsc:0,pend:0,conf:0,msg:''},(()=>{try{return JSON.parse(localStorage.getItem('gg_bk'))||{}}catch(e){return{}}})());
+let bkTok=null,bkExp=0,bkBusy=false,bkDue=0,bkDir=null;
+const bkSave=()=>{try{localStorage.setItem('gg_bk',JSON.stringify(BK))}catch(e){}};
+const bkHash=s=>{let a=3735928559,b=1103547991;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}a=Math.imul(a^a>>>16,2246822507)^Math.imul(b^b>>>13,3266489909);b=Math.imul(b^b>>>16,2246822507)^Math.imul(a^a>>>13,3266489909);return(4294967296*(2097151&b)+(a>>>0)).toString(36)+'-'+s.length};
+async function bkSnap(){const s=JSON.stringify({...db,_files:await fall()});return{s,h:bkHash(s)}}
+function bkDirty(){if(BK.email&&BK.auto)bkDue=Date.now()+20000}
+function gsi(){return window.google&&google.accounts&&google.accounts.oauth2?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.onload=ok;s.onerror=()=>no(new Error('Sem internet'));document.head.appendChild(s)})}
+function gTok(inter){if(bkTok&&Date.now()<bkExp-60000)return Promise.resolve(bkTok);if(GCID.startsWith('COLE'))return Promise.reject(new Error('Client ID do Google não configurado'));return gsi().then(()=>new Promise((ok,no)=>{const c=google.accounts.oauth2.initTokenClient({client_id:GCID,scope:GSC,callback:r=>{if(r.error)return no(new Error(r.error));bkTok=r.access_token;bkExp=Date.now()+(+r.expires_in||3600)*1000;ok(bkTok)},error_callback:e=>no(new Error(e.type||'popup'))});c.requestAccessToken({prompt:inter?(BK.email?'':'select_account'):'none',login_hint:BK.email||undefined})}))}
+async function dr(u,o,t){o=o||{};const r=await fetch(u,{...o,headers:{...(o.headers||{}),Authorization:'Bearer '+t}});if(r.status==401){bkTok=null;throw new Error('token')}if(!r.ok)throw new Error('Drive '+r.status);return r}
+async function drList(t){return(await(await dr(DA+'?spaces=appDataFolder&fields='+encodeURIComponent('files(id,modifiedTime,appProperties)')+'&q='+encodeURIComponent("name='"+BKF+"'"),{},t)).json()).files||[]}
+async function drPut(t,s,h){const f=(await drList(t))[0],m={name:BKF,appProperties:{h}};if(!f)m.parents=['appDataFolder'];const bd='gg'+Date.now(),body='--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+JSON.stringify(m)+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+s+'\r\n--'+bd+'--';await dr(DU+(f?'/'+f.id:'')+'?uploadType=multipart',{method:f?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body},t)}
+async function drUp(inter,force){if(bkBusy)return;bkBusy=true;try{const{s,h}=await bkSnap();if(h==BK.hd&&!force&&!BK.pend)return;const t=await gTok(inter),f=(await drList(t))[0],rh=f&&f.appProperties&&f.appProperties.h;if(rh&&rh!=BK.hd&&rh!=h&&!force){BK.conf=1;BK.pend=0;bkSave();return}await drPut(t,s,h);BK.hd=h;BK.ts=Date.now();BK.pend=0;BK.conf=0;BK.msg='';bkSave()}catch(e){BK.pend=1;BK.msg=e.message=='token'?'':e.message;bkSave();if(inter)alert('Não foi possível enviar o backup: '+e.message)}finally{bkBusy=false;bkUI()}}
+async function drRestore(t,f){t=t||await gTok(true);f=f||(await drList(t))[0];if(!f)throw new Error('Não há backup na conta');const d=JSON.parse(await(await dr(DA+'/'+f.id+'?alt=media',{},t)).text());if(!d.orc||!d.cli)throw new Error('Backup inválido');const fl=d._files||{};delete d._files;db=norm(d);save();await fclr();for(const k in fl)await fput(k,fl[k]);BK.hd=(f.appProperties||{}).h||'';BK.conf=0;BK.pend=0;bkSave();render()}
+async function bkRest(){if(!confirm('Substituir os dados deste aparelho pelo backup da conta Google?'))return;try{await drRestore()}catch(e){alert('Erro: '+e.message)}bkUI()}
+async function gLogin(){try{const t=await gTok(true),u=await(await dr('https://www.googleapis.com/oauth2/v3/userinfo',{},t)).json();BK.email=u.email||'conta Google';bkSave();const f=(await drList(t))[0],rh=f&&f.appProperties&&f.appProperties.h;if(rh&&rh!=BK.hd){if(confirm('Já existe um backup nesta conta ('+new Date(f.modifiedTime).toLocaleString('pt-BR')+').\n\nOK = restaurar o backup da conta neste aparelho (substitui os dados atuais).\nCancelar = manter os dados deste aparelho (o backup da conta será substituído).'))await drRestore(t,f);else{BK.hd=rh;await drUp(false,true)}}else await drUp(false,true)}catch(e){alert('Não foi possível entrar: '+e.message)}bkUI()}
+function gOut(){if(!confirm('Sair da conta Google? Os dados deste aparelho e o backup da conta não serão alterados.'))return;BK.email='';BK.hd='';BK.pend=0;BK.conf=0;bkTok=null;bkDue=0;bkSave();bkUI()}
+async function drDel(){if(!confirm('Apagar o backup da conta Google? O programa neste aparelho NÃO será alterado.'))return;if(prompt('Digite APAGAR para continuar:')!=='APAGAR')return;try{const t=await gTok(true);for(const f of await drList(t))await dr(DA+'/'+f.id,{method:'DELETE'},t);BK.hd='';BK.auto=false;BK.pend=0;BK.conf=0;bkSave();alert('Backup da conta apagado. O backup automático na conta foi desligado; ligue de novo ou use "Fazer backup agora" quando quiser enviar um novo.')}catch(e){alert('Erro: '+e.message)}bkUI()}
+async function limpaAp(){if(!confirm('Limpar os dados DESTE APARELHO e sair da conta Google? O backup na conta não será alterado. O que ainda não foi enviado ao Drive será perdido.'))return;BK.email='';BK.hd='';BK.pend=0;BK.conf=0;bkTok=null;bkDue=0;bkSave();localStorage.removeItem(K);await fclr();db=fresh();save();tab='ven';po=null;render()}
+function bkDl(s,n){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'application/json'}));a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),9e3)}
+async function arqTick(){BK.tsf=Date.now();const{s,h}=await bkSnap();if(h==BK.hf){bkSave();return}if(bkDir){try{const w=await(await bkDir.getFileHandle('gestao-grafica-backup-auto.json',{create:true})).createWritable();await w.write(s);await w.close()}catch(e){bkDir=null;bkDl(s,'gestao-grafica-backup-auto-'+new Date().toLocaleString('sv').slice(0,16).replace(' ','_').replace(':','h')+'.json')}}else bkDl(s,'gestao-grafica-backup-auto-'+new Date().toLocaleString('sv').slice(0,16).replace(' ','_').replace(':','h')+'.json');BK.hf=h;bkSave();bkUI()}
+async function bkPasta(){try{bkDir=await showDirectoryPicker({mode:'readwrite'});BK.hf='';bkSave();arqTick()}catch(e){}bkUI()}
+function bkSet(k,v){BK[k]=v;bkSave();if(k=='auto'&&v)bkDue=Date.now()+1000;if(k=='arq'&&v)BK.tsf=0;bkUI()}
+function bkTick(){const n=Date.now();if(BK.arq&&n-BK.tsf>=(BK.amin||30)*60000)arqTick();if(BK.email&&BK.auto&&!bkBusy&&((bkDue&&n>=bkDue)||n-BK.tsc>=(BK.min||15)*60000)){bkDue=0;BK.tsc=n;drUp(false)}}
+function bkH(){const lg=!!BK.email,fm=t=>t?new Date(t).toLocaleString('pt-BR'):'nunca';return '<hr><b>Conta Google (backup no Drive)</b>'+(lg?`<p class="mut">Conectado: <b>${esc(BK.email)}</b>. Último envio: ${fm(BK.ts)}.${BK.pend?' <b>Backup pendente.</b>':''}${BK.msg?' Último erro: '+esc(BK.msg):''}</p><label><input type="checkbox" ${BK.auto?'checked':''} onchange="bkSet('auto',this.checked)">Backup automático na conta (após alterações e a cada <input type="number" min="1" value="${BK.min}" style="width:64px" onchange="bkSet('min',+this.value||15)"> min, só se houver diferença)</label><div class="acts"><button class="pri" onclick="drUp(true,true)">Fazer backup agora</button><button onclick="bkRest()">Restaurar da conta</button><button class="del" onclick="drDel()">Apagar backup da conta</button><button onclick="gOut()">Sair da conta</button></div>`:'<p class="mut">O programa funciona sem login. Entrando, os dados e as artes são guardados na sua conta Google.</p><div class="acts"><button class="pri" onclick="gLogin()">Entrar com Google</button></div>')+`<hr><b>Backup automático em arquivo</b><p class="mut">Funciona só com o programa aberto, com ou sem conta. Baixa o arquivo só se houver diferença desde o último.</p><label><input type="checkbox" ${BK.arq?'checked':''} onchange="bkSet('arq',this.checked)">Ativar, a cada <input type="number" min="1" value="${BK.amin}" style="width:64px" onchange="bkSet('amin',+this.value||30)"> min</label>${window.showDirectoryPicker?`<div class="acts"><button onclick="bkPasta()">Escolher pasta (computador)</button></div><p class="mut">${bkDir?'Pasta escolhida: o mesmo arquivo é sobrescrito (vale até fechar o programa).':'Sem pasta escolhida: cada backup é baixado como um arquivo novo.'}</p>`:'<p class="mut">Neste aparelho cada backup é baixado como um arquivo novo, com data e hora no nome.</p>'}<hr><div class="acts"><button class="del" onclick="limpaAp()">Limpar neste aparelho</button></div><p class="mut">"Limpar neste aparelho" apaga só os dados daqui e sai da conta; o backup na conta fica como está.</p>`}
+function bkBn(){let b=$('#bk-bn');if(!(BK.email&&(BK.pend||BK.conf))){if(b)b.remove();return}if(!b){b=document.createElement('div');b.id='bk-bn';b.style.cssText='position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#16212b;color:#fff;padding:10px 12px;border-radius:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px';document.body.appendChild(b)}b.innerHTML=BK.conf?'<span>A conta tem um backup diferente do último enviado daqui (outro aparelho?).</span><button onclick="drUp(true,true)">Sobrescrever com este</button><button onclick="bkRest()">Restaurar da conta</button>':'<span>Backup pendente.</span><button onclick="drUp(true)">Toque para renovar e enviar</button>'}
+function bkUI(){const b=$('#bk-box');if(b)b.innerHTML=bkH();bkBn()}
+setInterval(bkTick,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BK.email&&BK.auto)bkDue=Date.now()+2000});setTimeout(()=>{if(BK.email&&BK.auto)bkDue=Date.now()+2000;bkBn()},1500);
 
 function render(){
  $('#tabs').innerHTML=[['ven','🛒','Vendas'],['com','💼','Comercial'],['ped','📋','Pedidos'],['prd','🏭','Produção'],['cli','👥','Clientes'],['it','📦','Produtos'],['est','📊','Estatísticas'],['cfg','⚙️','Configurações']].map(([k,i,l])=>`<button class="${tab==k?'on':''}" onclick="goTab('${k}')" title="${l}" aria-label="${l}"><span class="ic">${i}</span><span class="lb">${l}</span></button>`).join('');
@@ -178,13 +211,14 @@ function openV(id){const o=id?get(id):null;vsd={id:o?o.id:null,cid:o?o.cid:null,
 function vpClose(){if(vsd&&!vsd.ro&&its.length&&!confirm('Fechar a venda? Os produtos lançados serão descartados.'))return;pgv=false;vsd=null;its=[];render()}
 function vPDV(){const ro=vsd.ro,o=vsd.id?get(vsd.id):null,dis=ro?'disabled':'';
   return `<div class="form" style="margin-top:0"><div class="pagehd"><h3>Venda${o?' nº '+o.n:''}</h3><button type="button" onclick="vpClose()" title="Fechar" aria-label="Fechar">✕</button></div>
-  <div class="acts" style="align-items:flex-end;gap:8px"><label style="flex:1 1 180px;margin:0">Cliente<select id="vp-c" style="width:100%" ${dis}>${vcliOpts(vsd.cid)}</select></label>${ro?'':'<button type="button" onclick="cliPop(null,\'v\')" style="flex:0 0 auto;margin:0 0 2px">+ Novo Cliente</button>'}<label style="flex:0 0 150px;margin:0">Entrega<select id="vp-x" style="width:100%" onchange="vpT()" ${dis}><option value="">Sem entrega</option>${db.tx.map(x=>`<option value="${x.id}" ${vsd.tx==x.id?'selected':''}>${esc(x.nome)} - ${fmt(x.valor)}</option>`).join('')}</select></label></div>
+  <div class="acts" style="align-items:flex-end;gap:8px"><label style="flex:1 1 180px;margin:0">Cliente<select id="vp-c" style="width:100%" ${dis}>${vcliOpts(vsd.cid)}</select></label>${ro?'':'<button type="button" onclick="cliPop(null,\'v\')" style="flex:0 0 auto;margin:0 0 2px">+ Novo Cliente</button>'}</div>
   ${ro?'':`<div class="acts" style="margin-top:8px;flex-wrap:nowrap"><input id="vp-s" placeholder="Buscar produto (nome ou código)" autocomplete="off" oninput="vpS()" onkeydown="vpK(event)" style="flex:1;min-width:0"><label style="margin:0;display:flex;align-items:center;gap:6px">Quant.<input id="vp-q" type="number" step="any" min="0" value="1" style="width:90px"></label><button type="button" class="pri" onclick="vpNP()" title="Novo produto" aria-label="Novo produto" style="flex:0 0 auto">+</button></div><div id="vp-r" class="list" hidden></div>`}
   <div id="vp-l" style="margin-top:10px"></div>
+  ${entH('vp',o,ro)}
   <label style="margin-top:8px">Observação<textarea id="vp-o" rows="2" ${dis}>${esc(vsd.obs)}</textarea></label>
   <div class="acts" style="margin-top:8px"><button type="button" id="vp-db" onclick="vpDesc()" ${dis}>Desconto</button></div>
   <div class="mut" id="vp-sm"></div>
-  ${ro?`<div class="form"><b>Venda concluída</b>${o.pays.map(p=>`<div class="mut">${dt(p.d)} · ${fmt(p.v)} · ${esc(p.f)}${p.pc>1?' em '+p.pc+'x':''}</div>`).join('')}</div>`:''}
+  ${ro?`<div class="form"><b>Venda concluída</b>${o.pays.map((p,i)=>`<div class="row"><span class="mut">${dt(p.d)} · ${p.rf?'Estorno ':''}${fmt(p.v)} · ${esc(p.f)}${p.pc>1?' em '+p.pc+'x':''}</span>${p.rf?'':`<span class="acts"><button onclick="payEdit(${o.id},${i})">Editar</button><button class="del" onclick="payDel(${o.id},${i})">Excluir</button></span>`}</div>`).join('')}</div>`:''}
   <div class="row" style="margin-top:8px"><b style="font-size:20px">Total: <span id="vp-t"></span></b>${ro?`<button class="pri" onclick="recibo(get(${o.id}),${o.pays.length-1})">Recibo</button>`:'<button class="pri" onclick="vpGo()" style="padding:12px 22px;font-size:16px">CONCLUIR VENDA</button>'}</div></div>`}
 function vpInit(){vsd.dr=vsd.aj?rnd(-vsd.aj):0;vsd.dp='';vdm='r';vpR();if(!vsd.ro)$('#vp-s').focus()}
 function vpFind(q){q=nz(q.trim());if(!q)return[];const a=db.it.filter(x=>nz(x.nome).includes(q)||nz(x.cod).includes(q)||nz(x.marca).includes(q)),k=db.kits.filter(x=>nz('kit '+x.nome).includes(q)).map(x=>({isk:1,...x}));return[...a,...k].slice(0,8)}
@@ -213,13 +247,13 @@ function vrc(i,k,v){const r=its[i],it=db.it.find(x=>x.id==r.iid);v=+v;r[k]=v;
 function vrefr(i){const r=its[i],g=x=>$('#'+x+i),u=g('vu'),q=g('vq'),t=g('vt'),d=g('vd'),a=g('vra');if(u&&document.activeElement!==u)u.value=+(+r.p).toFixed(4);if(q&&document.activeElement!==q)q.value=r.q;if(t)t.textContent=fmt(r.t);if(d)d.textContent=r.d;const nn=g('vn');if(nn)nn.innerHTML=negH(r);if(a)a.textContent=fm(r.ar)+' m²';vpT()}
 function vpDesc(){if(vsd.ro)return;$('#dd').innerHTML=`<h3 style="margin:0 0 8px">Desconto</h3><div class="g2"><label>Valor (R$)<input id="dd-r" type="number" step="any" min="0" value="${vsd.dr||''}" oninput="ddI('r')"></label><label>Porcentagem (%)<input id="dd-p" type="number" step="any" min="0" value="${vsd.dp||''}" oninput="ddI('p')"></label></div><div class="mut">Preencha um dos campos: o outro é calculado sobre o valor dos produtos.</div><div class="acts" style="margin-top:10px;justify-content:flex-end"><button onclick="ddI('x')">Remover desconto</button><button class="pri" onclick="$('#dd').close()">OK</button></div>`;$('#dd').showModal();$('#dd-r').focus()}
 function ddI(m){if(m=='x'){vsd.dr=0;vsd.dp='';vdm='r'}else if(m=='r'){vsd.dr=+$('#dd-r').value||0;vdm='r'}else{vsd.dp=+$('#dd-p').value||0;vdm='p'}vpT()}
-const vcur=()=>({it:its,aj:-(+vsd.dr||0),tx:+($('#vp-x')||{}).value||null,gr:vsd.gr,ln:[],pays:[]});
+const vcur=()=>({it:its,aj:-(+vsd.dr||0),...entObj('vp'),ln:[],pays:[]});
 function vpT(){const sb=sub({it:its});
   if(vdm=='p')vsd.dr=rnd(sb*(+vsd.dp||0)/100);else vsd.dp=sb&&vsd.dr?+((+vsd.dr||0)/sb*100).toFixed(2):'';
   const c=vcur(),T=tot(c),a=$('#dd-r'),b=$('#dd-p');
   if(a&&document.activeElement!==a)a.value=vsd.dr||'';if(b&&document.activeElement!==b)b.value=vsd.dp||'';
   $('#vp-t').textContent=fmt(T);$('#vp-db').textContent=vsd.dr?'Desconto: − '+fmt(vsd.dr)+(vsd.dp?' ('+vsd.dp+'%)':''):'Desconto';
-  $('#vp-sm').textContent='Produtos '+fmt(sb)+(c.tx?' · Entrega '+fmt(entV(c)):'')+(c.aj?' · Desconto − '+fmt(-c.aj):'')}
+  $('#vp-sm').textContent='Produtos '+fmt(sb)+(c.txv||c.tx?' · Entrega '+fmt(entV(c)):'')+(c.aj?' · Desconto − '+fmt(-c.aj):'')}
 function vpGo(){if(vsd.ro)return;if(!its.length)return alert('Adicione pelo menos um produto à venda.');if(its.some(r=>!(+r.q>0)))return alert('Confira as quantidades: há produto com quantidade zerada.');if(!(tot(vcur())>0))return alert('O total da venda precisa ser maior que zero.');vpPay()}
 function vpNP(){['c','n','v'].forEach(x=>$('#np-'+x).value='');$('#np-a').checked=false;$('#np-c').readOnly=false;$('#dnp').showModal();$('#np-c').focus()}
 function npA(){const a=$('#np-a').checked,c=$('#np-c');c.readOnly=a;if(a)c.value=nextCod()}
@@ -238,7 +272,7 @@ function ppOk(){const T=rnd(tot(vcur())),vals=FPV.map((_,i)=>ppV(i)),s=rnd(vals.
   const tr=rnd(Math.max(0,s-T));if(tr>vals[0]+.005)return alert('O troco ('+fmt(tr)+') é maior que o valor pago em dinheiro. O troco só pode ser devolvido em dinheiro.');
   const dia=hoje(),pays=[];
   FPV.forEach(([l,f,pc],i)=>{let v=vals[i];if(i==0)v=rnd(v-tr);if(v>0){const p={v,f,d:dia,ds:0},n=pc?Math.max(1,parseInt($('#ppc'+i).value)||1):1;if(n>1)p.pc=n;pays.push(p)}});
-  const d={cid:+$('#vp-c').value||null,data:vsd.data,it:its,obs:$('#vp-o').value,aj:rnd(-(+vsd.dr||0))||0,tx:+$('#vp-x').value||null,gr:vsd.gr,val:6,prev:0};d.txv=d.tx?(()=>{const f=txx(d.tx);return{valor:f.valor,custo:f.custo}})():null;d.tr=tr;
+  const d={cid:+$('#vp-c').value||null,data:vsd.data,it:its,obs:$('#vp-o').value,aj:rnd(-(+vsd.dr||0))||0,...entObj('vp'),val:6,prev:0};d.tr=tr;
   let o;if(vsd.id){o=get(vsd.id);Object.assign(o,d)}else{o={id:db.id++,n:db.seq++,st:'aberto',pays:[],ln:[],hp:[],venda:1,...d};db.orc.push(o);hlog(o,'Criado','Venda')}
   pays.forEach(p=>{o.pays.push(p);hlog(o,'Pagamento',p.f+(p.pc>1?' em '+p.pc+'x':''),p.v)});conf(o);stat(o);save();$('#dp').close();pgv=false;vsd=null;its=[];tab='ven';render();
   if(confirm('Venda concluída. Imprimir o cupom da venda?'))cupomV(o)}
@@ -254,7 +288,7 @@ function delOk(id){const o=get(id);if(!o)return;const m=$('#dx-m').value.trim(),
   db.del.push({n:o.n,tipo:o.venda?'Venda':o.ped?'Pedido':'Orçamento',cli:c?c.nome:'',total:tot(o),pago:paid(o),data:o.data,st:o.est?'Estornado':ST[o.st],it:o.it.map(r=>({d:r.d,q:r.q,t:r.t})),pays:o.pays.map(p=>({...p})),mt:m,em:agora()});
   hlog(o,'Excluído',m);db.orc=db.orc.filter(x=>x.id!=id);if(po==id)po=null;save();$('#dx').close();render()}
 function estPop(id){const o=get(id);if(!o)return;const pg=paid(o);
-  $('#dx').innerHTML=`<div class="pagehd"><h3>Estornar valores — nº ${o.n}</h3><button type="button" onclick="$('#dx').close()" aria-label="Fechar" title="Fechar">✕</button></div><div class="mut">Total ${fmt(tot(o))} · já pago ${fmt(pg)}</div>
+  $('#dx').innerHTML=`<div class="pagehd"><h3>Estornar valores — nº ${o.n}</h3><button type="button" onclick="$('#dx').close()" aria-label="Fechar" title="Fechar">✕</button></div><div class="mut">Total ${fmt(tot(o))} · já pago ${fmt(pg)}</div>${pg>tot(o)+.005?`<div style="color:#a3281f">Pago a mais: ${fmt(pg-tot(o))}. Devolver essa diferença só mexe no caixa, sem reduzir o lucro.</div>`:''}
   <label><input type="radio" name="et" value="p" checked onchange="exT()"> Estorno parcial: devolver um valor</label>
   <div id="ex-p" class="g2"><label>Valor a devolver (R$)<input id="ex-v" type="number" step="any" min="0"></label><label>Forma de devolução<select id="ex-f">${FP.map(f=>`<option>${f}</option>`).join('')}</select></label></div>
   <label><input type="radio" name="et" value="t" onchange="exT()"> Estorno total: devolve ${fmt(pg)}, cancela o registro, devolve o estoque e tira tudo das estatísticas</label>
@@ -299,6 +333,34 @@ document.addEventListener('keydown',e=>{const c=$('#calcp');if(!c||c.hidden)retu
 (function(){const L=[['C','C'],['⌫','B'],['%','%'],['÷','/'],['7'],['8'],['9'],['×','*'],['4'],['5'],['6'],['−','-'],['1'],['2'],['3'],['+','+'],['0'],[',','.'],['=','=','eq']];
   $('#c-k').innerHTML=L.map(([t,k,c])=>`<button type="button" class="${c||(/^[÷×−+]$/.test(t)?'op':'')}" onclick="calcK('${k||t}')">${t}</button>`).join('')})();
 
+/* ENTREGA (linha destacada) */
+function entH(p,o,dis){const sel=o?(o.tx?String(o.tx):(o.txv?'x':'')):'',ev=o&&o.txv?o.txv.valor:'',ec=o&&o.txv?o.txv.custo:'',d=dis?'disabled':'';
+  return `<div id="${p}-eb" class="entb"><b>Entrega</b><div class="g2"><label>Tipo<select id="${p}-x" onchange="entSel('${p}')" ${d}><option value="">Sem entrega</option>${db.tx.map(x=>`<option value="${x.id}" ${sel==x.id?'selected':''}>${esc(x.nome)}</option>`).join('')}<option value="x" ${sel=='x'?'selected':''}>Outra (informar valores)</option></select></label>
+  <label>Valor cobrado do cliente (R$)<input id="${p}-ev" type="number" step="0.01" min="0" value="${ev}" oninput="entIn('${p}')" ${d}></label>
+  <label>Custo da entrega, o que você paga (R$)<input id="${p}-ec" type="number" step="0.01" min="0" value="${ec}" oninput="entIn('${p}')" ${d}></label>
+  <div><label style="margin:0"><input type="checkbox" id="${p}-g" ${o&&o.gr?'checked':''} onchange="entIn('${p}')" ${d}> Grátis para o cliente (o custo continua)</label><label style="margin:0"><input type="checkbox" id="${p}-ed" ${o&&o.ed?'checked':''} onchange="entIn('${p}')" ${d}> Cliente paga direto ao entregador (não entra no total, no caixa nem no lucro)</label></div></div></div>`}
+const entEl=(p,k)=>$('#'+p+'-'+k);
+function entSel(p){const v=entEl(p,'x').value;if(v==''){entEl(p,'ev').value='';entEl(p,'ec').value='';entEl(p,'g').checked=false;entEl(p,'ed').checked=false}else if(v!='x'){const t=txx(+v);entEl(p,'ev').value=t.valor;entEl(p,'ec').value=t.custo}entIn(p)}
+function entIn(p){if(!entEl(p,'x').value&&((+entEl(p,'ev').value)||(+entEl(p,'ec').value)))entEl(p,'x').value='x';if(p=='q')qt();else vpT()}
+function entObj(p){const x=(entEl(p,'x')||{}).value||'',on=!!x,g=k=>(entEl(p,k)||{});return{tx:on&&x!='x'?+x:null,txv:on?{valor:rnd(+g('ev').value||0),custo:rnd(+g('ec').value||0)}:null,gr:on&&!!g('g').checked,ed:on&&!!g('ed').checked}}
+function logAlt(a,b){const m=[],ea=entV(a),eb=entV(b),ca=cost(a)-a.it.reduce((x,r)=>x+(r.cu||0),0),cb=cost(b)-b.it.reduce((x,r)=>x+(r.cu||0),0);
+  if(ea!=eb||!!a.ed!=!!b.ed||!!a.gr!=!!b.gr||ca!=cb)m.push('Entrega: cobrado '+fmt(ea)+' → '+fmt(eb)+', custo '+fmt(ca)+' → '+fmt(cb)+(b.ed?' (cliente paga ao entregador)':'')+(b.gr?' (grátis)':''));
+  if(sub(a)!=sub(b)||a.it.length!=b.it.length)m.push('Produtos: '+a.it.length+' item(ns) '+fmt(sub(a))+' → '+b.it.length+' item(ns) '+fmt(sub(b)));
+  if(tot(a)!=tot(b))m.push('Total: '+fmt(tot(a))+' → '+fmt(tot(b)));
+  if(m.length)hlog(b,'Alteração',m.join(' · '))}
+/* PAGAMENTOS: corrigir e excluir lançamento */
+function payRefresh(o){if(pgv)render();else if(pgq&&edit==o.id){render();pgs();qt()}else render()}
+function payEdit(oid,i){const o=get(oid),p=o&&o.pays[i];if(!p||p.rf)return;
+  $('#dpe').innerHTML=`<div class="pagehd"><h3>Corrigir pagamento — nº ${o.n}</h3><button type="button" onclick="$('#dpe').close()" aria-label="Fechar" title="Fechar">✕</button></div><div class="g2"><label>Valor (R$)<input id="pe-v" type="number" step="0.01" min="0" value="${p.v}"></label><label>Forma<select id="pe-f">${FP.map(f=>`<option ${f==p.f?'selected':''}>${f}</option>`).join('')}</select></label><label>Data<input id="pe-d" type="date" value="${p.d}"></label><label>Parcelas<input id="pe-c" type="number" min="1" value="${p.pc||1}"></label></div><label>Motivo da correção<input id="pe-m" placeholder="Ex.: valor digitado errado"></label><div class="mut">Isto corrige o lançamento e não conta como devolução ao cliente. A correção fica no histórico.</div><div class="acts" style="justify-content:flex-end;margin-top:8px"><button type="button" onclick="$('#dpe').close()">Voltar</button><button type="button" class="pri" onclick="paySave(${oid},${i})">Salvar</button></div>`;$('#dpe').showModal()}
+function paySave(oid,i){const o=get(oid),p=o.pays[i],v=rnd(+$('#pe-v').value||0),m=$('#pe-m').value.trim();if(!(v>0))return alert('Informe um valor maior que zero.');
+  const a=fmt(p.v)+' '+p.f+' '+dt(p.d);if(paid(o)-p.v+v<-.005)return alert('Há estornos que dependem deste pagamento.');
+  p.v=v;p.f=$('#pe-f').value;p.d=$('#pe-d').value||p.d;const pc=Math.max(1,parseInt($('#pe-c').value)||1);if(pc>1)p.pc=pc;else delete p.pc;
+  hlog(o,'Pagamento corrigido',a+' → '+fmt(p.v)+' '+p.f+' '+dt(p.d)+(m?' — '+m:''));stat(o);save();$('#dpe').close();payRefresh(o)}
+function payDel(oid,i){const o=get(oid),p=o&&o.pays[i];if(!p||p.rf)return;
+  $('#dpe').innerHTML=`<div class="pagehd"><h3>Excluir pagamento — nº ${o.n}</h3><button type="button" onclick="$('#dpe').close()" aria-label="Fechar" title="Fechar">✕</button></div><div class="mut">${dt(p.d)} · ${fmt(p.v)} · ${esc(p.f)}</div><label>Motivo da exclusão<input id="pe-m" placeholder="Ex.: pagamento lançado por engano"></label><div class="mut">O lançamento sai do caixa e das estatísticas, e a exclusão fica no histórico. Não conta como devolução ao cliente.</div><div class="acts" style="justify-content:flex-end;margin-top:8px"><button type="button" onclick="$('#dpe').close()">Voltar</button><button type="button" class="del" onclick="payDelOk(${oid},${i})">Excluir pagamento</button></div>`;$('#dpe').showModal()}
+function payDelOk(oid,i){const o=get(oid),p=o.pays[i],m=$('#pe-m').value.trim();if(paid(o)-p.v<-.005)return alert('Não é possível excluir: há estornos que dependem deste pagamento.');
+  o.pays.splice(i,1);hlog(o,'Pagamento excluído',fmt(p.v)+' '+p.f+' '+dt(p.d)+(m?' — '+m:''),-p.v);stat(o);save();$('#dpe').close();payRefresh(o)}
+
 /* ORÇAMENTOS */
 function vOrc(){
  const cst=o=>['aprovado','executado','pago'].includes(o.st)?'aprovado':o.st,l=db.orc.filter(o=>!o.venda&&!o.dir&&(flt=='todos'?(cst(o)=='aberto'||(cst(o)=='aprovado'&&!o.ped)):cst(o)==flt)).sort((a,b)=>b.n-a.n);
@@ -318,8 +380,8 @@ let vm=false;function dvSel(){$('#q-dv2').hidden=$('#q-dv').value!='x'}
 function openQ(id,v,pd){const o=id?get(id):null;if((o&&o.venda)||(!o&&v))return openV(id);vm=o?!!o.venda:!!v;pmd=o?!!o.dir:!!pd;edit=o?o.id:null;document.querySelectorAll('.nv').forEach(e=>e.hidden=vm);
  $('#dqt').textContent=o?(vm?'Venda':o.ped?'Pedido':'Orçamento')+' nº '+o.n:(vm?'Nova venda':pmd?'Novo pedido':'Novo orçamento');
  $('#q-c').innerHTML=cliOpts(o?o.cid:null);{const d=dv(o||{});$('#q-dv').value=[5,10].includes(d)?d:'x';$('#q-dv2').value=[5,10].includes(d)?'':d;$('#q-dv2').hidden=[5,10].includes(d)}
- $('#q-x').innerHTML='<option value="">Sem entrega</option>'+db.tx.map(x=>`<option value="${x.id}" ${o&&o.tx==x.id?'selected':''}>${esc(x.nome)} - ${fmt(x.valor)}</option>`).join('');
- $('#q-d').value=o?o.data:hoje();$('#q-a').value=o?o.aj||'':'';$('#q-v').value=o?o.val:6;$('#q-g').checked=!!(o&&o.gr);
+ $('#q-eh').innerHTML=entH('q',o,false);
+ $('#q-d').value=o?o.data:hoje();$('#q-a').value=o?o.aj||'':'';$('#q-v').value=o?o.val:6;
  its=o?o.it.map(x=>JSON.parse(JSON.stringify(x))):[newRow()];$('#q-o').value=o?o.obs:'';
  $('#dsrv').innerHTML=db.it.map(s=>`<option value="${esc(s.nome)}">`).join('')+db.kits.map(k=>`<option value="Kit: ${esc(k.nome)}">`).join('');
  rowsI();$('#q-pv').value=o?o.prev:Math.max(0,...its.map(r=>r.dd||0));pgs();qOpen()}
@@ -336,7 +398,7 @@ function rowsI(){$('#q-i').innerHTML=its.map((r,i)=>{const it=db.it.find(x=>x.id
 function calc(i){const r=its[i],it=db.it.find(x=>x.id==r.iid),k=db.kits.find(x=>x.id==r.kid);
  if(k){r.d='Kit '+k.nome;r.u='kit';const pr=k.promoOn&&k.promo;r.pn=pr?k.preco:0;r.p=pr?k.promo:k.preco;r.kc=k.itens.map(c=>{const x=db.it.find(y=>y.id==c.iid)||{};return{iid:c.iid,nome:(c.q>1?c.q+'x ':'')+(x.nome||'?'),dd:x.dias||0}});r.cpu=k.itens.reduce((a,c)=>a+((db.it.find(y=>y.id==c.iid)||{}).cp||0)*c.q,0);r.dd=Math.max(0,...r.kc.map(c=>c.dd))}
  else if(it&&it.tipo=='m2'){const w=+r.w||0,h=+r.h||0,a=Math.max(w*h,+it.mm||0),pr=it.promoOn&&it.pr;r.u='un';r.ar=a;r.pn=pr?it.mp:0;r.p=a*(pr?it.pr:it.mp);r.cpu=a*(+it.cm||0);r.dd=it.dias||0;r.d=`${it.nome} ${fm(w)} x ${fm(h)} m (${fm(a)} m²${a>w*h?', mínimo':''})`}
- else if(it&&it.tipo=='lote'){const l=it.lotes[r.lq||0];if(!l)return;const pr=it.promoOn&&l.pr;r.q=1;r.u='unidades';r.d=`${fm(l.q)} unid. ${it.nome}`;r.pn=pr?l.t:0;r.p=pr?l.pr:l.t;r.cpu=+l.c||0;r.dd=+l.d||0}
+ else if(it&&it.tipo=='lote'){const l=it.lotes[r.lq||0];if(!l)return;const pr=it.promoOn&&l.pr;r.q=r.q>0?r.q:1;r.u='lote';r.d=`${fm(l.q)} unid. ${it.nome}`;r.pn=pr?l.t:0;r.p=pr?l.pr:l.t;r.cpu=+l.c||0;r.dd=+l.d||0}
  else if(it){r.d=it.nome;r.u=it.un||'un';const pr=it.promoOn&&it.pr;r.pn=pr?it.preco:0;r.p=pr?it.pr:it.preco;r.cpu=it.cp||0;r.dd=it.dias||0}
  r.p=rnd(r.p*1e4)/1e4;r.t=rnd(r.q*r.p);r.cu=rnd(r.q*r.cpu)}
 function pick(i,v){const r=its[i],k=db.kits.find(x=>'Kit: '+x.nome==v),it=db.it.find(x=>x.nome.toLowerCase()==v.toLowerCase());r.d=v;r.iid=it?it.id:null;r.kid=k?k.id:null;delete r.kc;r.lq=0;r.w=r.h='';
@@ -346,16 +408,15 @@ function rc(i,k,v){const r=its[i],it=db.it.find(x=>x.id==r.iid);v=+v;r[k]=v;
  upd(i);qt()}
 function upd(i){const r=its[i];$('#rp'+i).value=+(+r.p).toFixed(4);$('#rt'+i).value=+(+r.t).toFixed(2);$('#rd'+i).value=r.dd||0;$('#rn'+i).value=r.d;const ra=$('#ra'+i);if(ra)ra.textContent=fm(r.ar)+' m²';pv();qt()}
 function pv(){$('#q-pv').value=Math.max(0,...its.map(r=>r.dd||0))}
-function qt(){const o={it:its,aj:$('#q-a').value,tx:+$('#q-x').value||null,gr:$('#q-g').checked,ln:[]},T=tot(o),L=lucro(o);$('#q-t').textContent=fmt(T);
+function qt(){const o={it:its,aj:$('#q-a').value,...entObj('q'),ln:[]},T=tot(o),L=lucro(o);$('#q-t').textContent=fmt(T);
  const bad=its.some(r=>r.t<r.cu);$('#q-l').innerHTML=`Lucro estimado (interno): ${fmt(L)} (${T?Math.round(L/T*100):0}%)${bad?' <b style="color:#a3281f">· atenção: produto com preço abaixo do custo</b>':''}`}
-function saveQ(){const d={cid:+$('#q-c').value||null,data:$('#q-d').value,it:its.filter(x=>x.d.trim()),obs:$('#q-o').value,aj:+$('#q-a').value||0,dv:gdv(),tx:+$('#q-x').value||null,gr:$('#q-g').checked,val:+$('#q-v').value||6,prev:+$('#q-pv').value||0};
+function saveQ(){const d={cid:+$('#q-c').value||null,data:$('#q-d').value,it:its.filter(x=>x.d.trim()),obs:$('#q-o').value,aj:+$('#q-a').value||0,dv:gdv(),...entObj('q'),val:+$('#q-v').value||6,prev:+$('#q-pv').value||0};
  d.it.forEach(r=>{if(!r.iid&&!r.kid){const n={id:db.id++,nome:r.d,tipo:'un',un:r.u,q:0,preco:r.q?r.t/r.q:r.p,cp:r.cpu||0,prod:'local',par:null,dias:r.dd||0};db.it.push(n);r.iid=n.id}});
- {const fx=d.tx?txx(d.tx):null,old=edit?get(edit):null;d.txv=!fx?null:(old&&old.tx==d.tx&&old.txv)?old.txv:{valor:fx.valor,custo:fx.custo}}
- let o;if(edit){o=get(edit);Object.assign(o,d)}else{o={id:db.id++,n:db.seq++,st:'aberto',pays:[],ln:[],hp:[],venda:vm?1:0,...d};db.orc.push(o);edit=o.id;hlog(o,'Criado',pmd?'Pedido':'Orçamento');if(pmd){o.dir=1;o.st='aprovado';conf(o)}}
- if(!o.venda)sync(o);if(o.sk)stockSync(o);stat(o);save();render();pgs();qt()}
+ const old0=edit?JSON.parse(JSON.stringify(get(edit))):null;let o;if(edit){o=get(edit);Object.assign(o,d)}else{o={id:db.id++,n:db.seq++,st:'aberto',pays:[],ln:[],hp:[],venda:vm?1:0,...d};db.orc.push(o);edit=o.id;hlog(o,'Criado',pmd?'Pedido':'Orçamento');if(pmd){o.dir=1;o.st='aprovado';conf(o)}}
+ if(!o.venda)sync(o);if(o.sk)stockSync(o);if(old0&&o.conf)logAlt(old0,o);stat(o);save();render();pgs();qt();if(!o.est&&paid(o)>tot(o)+.005)alert('Atenção: o valor pago ('+fmt(paid(o))+') é maior que o novo total ('+fmt(tot(o))+'). Diferença: '+fmt(paid(o)-tot(o))+'. Corrija o pagamento (botão Editar) ou devolva a diferença ao cliente (Estornar valor).')}
 function pgs(){const o=edit?get(edit):null;
- $('#q-pg').innerHTML=!o?'<p class="mut">Salve o orçamento para registrar pagamentos.</p>':`<div class="form"><b>Pagamentos</b> <span class="tag">${ST[o.st]}</span> <span class="mut">(total ${fmt(tot(o))} · pago ${fmt(paid(o))} · saldo ${fmt(tot(o)-paid(o))})</span><div class="mut">A produção é liberada com pelo menos ${fm(ent())}% pago.</div>
- ${o.pays.map((p,i)=>`<div class="row">${dt(p.d)} · ${p.rf?'Estorno ':''}${fmt(p.v)} · ${esc(p.f)}${p.pc>1?' em '+p.pc+'x':''}${p.rf?'':`<button onclick="recibo(get(${o.id}),${i})">Recibo</button>`}</div>`).join('')}
+ $('#q-pg').innerHTML=!o?'<p class="mut">Salve o orçamento para registrar pagamentos.</p>':`<div class="form"><b>Pagamentos</b> <span class="tag">${ST[o.st]}</span> <span class="mut">(total ${fmt(tot(o))} · pago ${fmt(paid(o))} · saldo ${fmt(tot(o)-paid(o))})</span><div class="mut">A produção é liberada com pelo menos ${fm(ent())}% pago.</div>${paid(o)>tot(o)+.005?`<div style="color:#a3281f"><b>⚠ Pago a mais: ${fmt(paid(o)-tot(o))}</b>. Corrija o pagamento (Editar) ou devolva a diferença (Estornar valor).</div>`:''}
+ ${o.pays.map((p,i)=>`<div class="row">${dt(p.d)} · ${p.rf?'Estorno ':''}${fmt(p.v)} · ${esc(p.f)}${p.pc>1?' em '+p.pc+'x':''}${p.rf?'':`<button onclick="recibo(get(${o.id}),${i})">Recibo</button><button onclick="payEdit(${o.id},${i})">Editar</button><button class="del" onclick="payDel(${o.id},${i})">Excluir</button>`}</div>`).join('')}
  <div class="acts" style="margin-top:6px"><select id="q-pf" style="width:auto">${FP.map(f=>`<option>${f}</option>`).join('')}</select><button onclick="pay('50')">Entrada ${fm(ent())}%</button><button onclick="pay('tot')">Total / saldo</button><button onclick="pay('out')">Outro valor</button><button onclick="pay('av')">À vista (−${fm(dv(o))}%)</button>${paid(o)>0?`<button onclick="estPop(${o.id})">Estornar valor</button>`:''}</div></div>`}
 function pay(k){const o=get(edit),f=$('#q-pf').value,t=tot(o),r=t-paid(o);let v,ds=0;
  if(k=='av'){o.dv=gdv();v=rnd(r*(1-o.dv/100));ds=rnd(r-v)}else v=rnd(k=='50'?t*ent()/100:k=='tot'?r:+(prompt('Valor recebido (R$):',r.toFixed(2))||0));
@@ -374,15 +435,15 @@ function pr(html,title,msg,o,size){const k=(db.cfg.fmt&&db.cfg.fmt[size])||size,
 const prazo=o=>Math.max(0,...o.it.map(r=>r.dd||0),o.prev||0);
 function pdf(id){const o=get(id),c=cli(o.cid),T=tot(o),e=db.emp;
  pr(`${hdr(`<b>ORÇAMENTO Nº ${o.n}</b><br>Criado em ${dt(o.data)}<br>Válido até ${dt(addD(o.data,o.val||6))}`)}${cbox(c)}
- <table><tr><th>Cód.</th><th>Descrição</th><th>Unid.</th><th>Qtd.</th><th>Valor unit.</th><th>Valor</th></tr>${o.it.map(r=>`<tr><td>${esc(pcod(r))}</td><td>${esc(r.d)}</td><td>${esc(r.u)}</td><td>${fm(r.q)}</td><td>${r.pn?'<s>'+fmt(r.pn)+'</s> ':''}${fmt(r.p)}</td><td>${fmt(r.t)}</td></tr>`).join('')}
- ${o.tx||o.gr?`<tr><td colspan="5">Entrega${o.gr?' (grátis)':''}</td><td>${fmt(entV(o))}</td></tr>`:''}${dsc(o)?`<tr><td colspan="5">Desconto à vista</td><td>- ${fmt(dsc(o))}</td></tr>`:''}${o.aj?`<tr><td colspan="5">${o.aj<0?'Desconto':'Acréscimo'}</td><td>${fmt(o.aj)}</td></tr>`:''}</table>
+ <table><tr><th>Cód.</th><th>Descrição</th><th>Unid.</th><th>Qtd.</th><th>Valor unit.</th><th>Valor</th></tr>${o.it.map(r=>`<tr><td>${esc(pcod(r))}</td><td>${esc(r.d)}</td><td>${esc(rUn(r))}</td><td>${fm(r.q)}</td><td>${r.pn?'<s>'+fmt(r.pn)+'</s> ':''}${fmt(r.p)}</td><td>${fmt(r.t)}</td></tr>`).join('')}
+ ${hasEnt(o)?`<tr><td colspan="5">Entrega${o.gr?' (grátis)':''}${o.ed?' (paga ao entregador)':''}</td><td>${fmt(entV(o))}</td></tr>`:''}${dsc(o)?`<tr><td colspan="5">Desconto à vista</td><td>- ${fmt(dsc(o))}</td></tr>`:''}${o.aj?`<tr><td colspan="5">${o.aj<0?'Desconto':'Acréscimo'}</td><td>${fmt(o.aj)}</td></tr>`:''}</table>
  <p class="big">Total: ${fmt(T)}</p><div class="bx"><b>Forma de pagamento</b><br>À vista no Pix com ${fm(dv(o))}% de desconto: ${fmt(T*(1-dv(o)/100))}<br>Entrada de ${fm(ent())}% (${fmt(T*ent()/100)}) no Pix e restante na entrega (${fmt(T-T*ent()/100)})<br>Parcelado em 2x de ${fmt(T/2)} no cartão, sem juros<br>Acima de 3x: consultar o vendedor${e.pix?`<br>Chave Pix: <b>${esc(e.pix)}</b>${e.titular?' ('+esc(e.titular)+')':''}`:''}</div>
  <p>Previsão de produção: ${prazo(o)} dias úteis após a aprovação da arte, sujeita à demanda.</p>${o.obs?'<p>'+esc(o.obs).replace(/\n/g,'<br>')+'</p>':''}`,
  'Orcamento-'+o.n+'-'+(c?c.nome:''),'Olá! Segue o orçamento nº '+o.n+' em PDF.',o,'orc')}
 function recibo(o,i){if(o.venda)return reciboV(o);const c=cli(o.cid),p=o.pays[i];
  pr(`${hdr(`<b>RECIBO Nº ${o.n}-${i+1}</b><br>${dt(p.d)}`)}${cbox(c)}<p>Recebemos a quantia de <b>${fmt(p.v)}</b>, forma de pagamento: <b>${esc(p.f)}${p.pc>1?' em '+p.pc+'x':''}</b>, referente ${o.venda?'à venda':'ao pedido'} nº ${o.n}.</p><p>Total do pedido: ${fmt(tot(o))}<br>Total pago: ${fmt(paid(o))}<br>${dsc(o)?'Desconto à vista concedido: '+fmt(dsc(o))+'<br>':''}Saldo em aberto: ${fmt(tot(o)-paid(o))}</p>`,
  'Recibo-'+o.n+'-'+(i+1),'Olá! Segue o recibo do pedido nº '+o.n+' em PDF.',o,'rec')}
-function txt(o){const c=cli(o.cid),T=tot(o);return `*Orçamento nº ${o.n}*${db.emp.nome?' - '+db.emp.nome:''}\nCliente: ${c?c.nome:''}\n\n`+o.it.map(r=>`${r.d} - ${fmt(r.t)}`).join('\n')+(o.tx||o.gr?`\nEntrega${o.gr?' (grátis)':''}: ${fmt(entV(o))}`:'')+`\n\n*Total: ${fmt(T)}*\nÀ vista no Pix (${fm(dv(o))}% de desconto): ${fmt(T*(1-dv(o)/100))}\nEntrada de ${fm(ent())}%: ${fmt(T*ent()/100)}\n2x no cartão sem juros: ${fmt(T/2)} cada\nPrevisão de produção: ${prazo(o)} dias úteis`}
+function txt(o){const c=cli(o.cid),T=tot(o);return `*Orçamento nº ${o.n}*${db.emp.nome?' - '+db.emp.nome:''}\nCliente: ${c?c.nome:''}\n\n`+o.it.map(r=>`${r.d} - ${fmt(r.t)}`).join('\n')+(hasEnt(o)?`\nEntrega${o.gr?' (grátis)':''}${o.ed?' (paga ao entregador)':''}: ${fmt(entV(o))}`:'')+`\n\n*Total: ${fmt(T)}*\nÀ vista no Pix (${fm(dv(o))}% de desconto): ${fmt(T*(1-dv(o)/100))}\nEntrada de ${fm(ent())}%: ${fmt(T*ent()/100)}\n2x no cartão sem juros: ${fmt(T/2)} cada\nPrevisão de produção: ${prazo(o)} dias úteis`}
 function wa(o,t){const c=cli(o.cid);window.open('https://wa.me/'+(c&&(c.wa||c.tel)?phone(c.wa||c.tel):'')+'?text='+encodeURIComponent(t),'_blank')}
 function wpp(id){const o=get(id);wa(o,txt(o))}
 const fill=(t,o)=>t.replace('{nome}',(cli(o.cid)||{}).nome||'').replace('{n}',o.n).replace('{prev}',prevD(o));
@@ -421,7 +482,7 @@ function regE(oid,i){const o=get(oid),l=o.ln[i],n=l.tl.length,L=labs(l);if(l.np|
 function npH(o,l,i){const solo=!pl(o).length,k=o.id+','+i;return `<div class="form"><div class="row"><b>${esc(l.d)}</b><span class="tag">Pronta entrega</span></div><div class="mut">Sem produção · ${done(o)?'entregue junto com o pedido':solo?'entrega direta':'aguarda a produção dos demais itens para ser entregue junto'}</div>${solo?(l.ent?`<div class="acts"><span class="stp">✔ Entregue</span><button onclick="entNp(${k},0)">Desfazer</button></div>`:`<div class="acts"><button class="pri" onclick="entNp(${k},1)">Marcar como entregue</button></div>`):''}</div>`}
 function entNp(oid,i,v){const o=get(oid);o.ln[i].ent=v?1:0;stat(o);save();render()}
 const stg=(o,l)=>{if(l.np)return done(o)?'Entregue':'Pronta entrega';const n=l.tl.length;if(n==0&&!unl(o))return'Aguardando liberação';return n==0?'Aprovação de arte':n>=7?'Entregue':labs(l)[n-1]};
-function prSum(o){return `<div class="form"><div class="row"><b>Produção</b><button class="pri" onclick="tab='prd';pfo='todos';pq2=${o.id};po=null;render()">Abrir na Produção</button></div>${o.ln.map(l=>`<div class="row"><span>${esc(l.d)}</span><span class="tag">${stg(o,l)}</span></div>`).join('')||'<div class="mut">Sem produtos.</div>'}</div>`}
+function prSum(o){return `<div class="form"><div class="row"><b>Produção</b><button class="pri" onclick="tab='prd';pfo='todos';pq2=${o.id};pxo.add(${o.id});po=null;render()">Abrir na Produção</button></div>${o.ln.map(l=>`<div class="row"><span>${esc(l.d)}</span><span class="tag">${stg(o,l)}</span></div>`).join('')||'<div class="mut">Sem produtos.</div>'}</div>`}
 function undoE(oid,i){const o=get(oid),l=o.ln[i];if(!l.tl.length||!confirm('Voltar a etapa "'+l.tl[l.tl.length-1].e+'"?'))return;l.log.push('Etapa "'+l.tl[l.tl.length-1].e+'" desfeita em '+agora());if(l.tl.length==1)delete l.ap;l.tl.pop();stat(o);save();render()}
 function prio(oid,i){const l=get(oid).ln[i];l.prio=l.prio?0:1;save();render()}
 function setModo(oid,i,v){get(oid).ln[i].modo=v;save();render()}
@@ -440,18 +501,19 @@ async function bx(k){const f=await fget(k);if(!f)return alert('Arquivo não enco
 /* CLIENTES */
 
 /* DOCUMENTOS: CUPOM, PEDIDO E APROVAÇÃO DE ARTE */
+const APP_V='2.3';
 const PGL=[['A4','A4'],['A5','A5'],['A6','A6'],['b58','Bobina 58 mm'],['b80','Bobina 80 mm'],['bc','Bobina personalizada']];
 function cupomV(o){const c=cli(o.cid),e=db.emp,sb=sub(o);
   pr(`<div style="text-align:center"><b>${esc(e.nome||'Minha loja')}</b><br>${[e.end,e.tel&&'Tel/WhatsApp: '+e.tel,e.cnpj&&'CNPJ: '+e.cnpj].filter(Boolean).map(esc).join('<br>')}</div><hr><b>VENDA Nº ${o.n}</b> · ${dt(o.data)}<br>${c?'Cliente: '+esc(c.nome)+'<br>':''}<hr>
-  ${o.it.map(r=>`${esc(pcod(r)?pcod(r)+' ':'')}${esc(r.d)}<span style="display:flex;justify-content:space-between"><span>${fm(r.q)} ${esc(r.u||'')} x ${fmt(r.p)}</span><span>${fmt(r.t)}</span></span>`).join('')}<hr>
-  <span style="display:flex;justify-content:space-between"><span>Produtos</span><span>${fmt(sb)}</span></span>${o.tx||o.gr?`<span style="display:flex;justify-content:space-between"><span>Entrega${o.gr?' (grátis)':''}</span><span>${fmt(entV(o))}</span></span>`:''}${o.aj?`<span style="display:flex;justify-content:space-between"><span>${o.aj<0?'Desconto':'Acréscimo'}</span><span>${fmt(o.aj)}</span></span>`:''}
+  ${o.it.map(r=>`${esc(pcod(r)?pcod(r)+' ':'')}${esc(r.d)}<span style="display:flex;justify-content:space-between"><span>${fm(r.q)} ${esc(rUn(r)||'')} x ${fmt(r.p)}</span><span>${fmt(r.t)}</span></span>`).join('')}<hr>
+  <span style="display:flex;justify-content:space-between"><span>Produtos</span><span>${fmt(sb)}</span></span>${hasEnt(o)?`<span style="display:flex;justify-content:space-between"><span>Entrega${o.gr?' (grátis)':''}${o.ed?' (paga ao entregador)':''}</span><span>${fmt(entV(o))}</span></span>`:''}${o.aj?`<span style="display:flex;justify-content:space-between"><span>${o.aj<0?'Desconto':'Acréscimo'}</span><span>${fmt(o.aj)}</span></span>`:''}
   <span style="display:flex;justify-content:space-between;font-weight:bold;font-size:1.15em"><span>TOTAL</span><span>${fmt(tot(o))}</span></span><hr>
   ${o.pays.map(p=>`<span style="display:flex;justify-content:space-between"><span>${p.rf?'Estorno ':''}${esc(p.f)}${p.pc>1?' '+p.pc+'x':''}</span><span>${fmt(p.v)}</span></span>`).join('')}${o.tr>0?`<span style="display:flex;justify-content:space-between"><span>Troco</span><span>${fmt(o.tr)}</span></span>`:''}<hr>
   <div style="text-align:center">${esc(db.cfg.rod||'')}${db.cfg.rod?'<br>':''}Obrigado pela preferência!</div>`,'Cupom-'+o.n,'Olá! Segue o comprovante da venda nº '+o.n+'.',o,'venda')}
 function pedPdf(id){const o=get(id),c=cli(o.cid),sd=tot(o)-paid(o),tx=o.tx?(db.tx.find(x=>x.id==o.tx)||{}).nome:'';
   pr(`${hdr(`<b>PEDIDO Nº ${o.n}</b><br>${dt(o.conf||o.data)}`)}${cbox(c)}
-  <table><tr><th>Cód.</th><th>Descrição</th><th>Unid.</th><th>Qtd.</th></tr>${o.it.map(r=>`<tr><td>${esc(pcod(r))}</td><td>${esc(r.d)}</td><td>${esc(r.u)}</td><td>${fm(r.q)}</td></tr>`).join('')}</table>
-  <div class="bx"><b>${o.tx?'Entrega'+(tx?': '+esc(tx):''):'Retirada na loja'}</b> · Previsão: ${prevD(o)}${c&&c.end&&o.tx?'<br>Endereço: '+esc(c.end):''}</div>
+  <table><tr><th>Cód.</th><th>Descrição</th><th>Unid.</th><th>Qtd.</th></tr>${o.it.map(r=>`<tr><td>${esc(pcod(r))}</td><td>${esc(r.d)}</td><td>${esc(rUn(r))}</td><td>${fm(r.q)}</td></tr>`).join('')}</table>
+  <div class="bx"><b>${hasEnt(o)?'Entrega'+(tx?': '+esc(tx):'')+(o.ed?' (cliente paga ao entregador)':''):'Retirada na loja'}</b> · Previsão: ${prevD(o)}${c&&c.end&&hasEnt(o)?'<br>Endereço: '+esc(c.end):''}</div>
   <p>Total: ${fmt(tot(o))} · Pago: ${fmt(paid(o))}${sd>.005?`<br><b>Saldo a pagar na entrega: ${fmt(sd)}</b>`:'<br><b>Pago</b>'}</p>${o.obs?'<p>'+esc(o.obs).replace(/\n/g,'<br>')+'</p>':''}
   <p style="margin-top:18px">Conferido por: ______________________ Data: ___/___/_____</p>`,'Pedido-'+o.n,'Olá! Segue o comprovante do pedido nº '+o.n+'.',o,'ped')}
 let _pj=null;
@@ -463,29 +525,39 @@ async function arteImgs(f){if(/^data:image\//.test(f.data))return[{lb:'Arte',src
   const doc=await lib.getDocument({data:u8}).promise,n=Math.min(2,doc.numPages),out=[];
   for(let k=1;k<=n;k++){const pg=await doc.getPage(k),vp=pg.getViewport({scale:1.6}),cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;await pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;out.push({lb:n==1?'Frente':(k==1?'Frente':'Verso'),src:cv.toDataURL('image/jpeg',.85)})}
   return out}
+const PGD={A4:[190,277],A5:[128,190],A6:[85,128]};
+function imgDims(x){return new Promise(res=>{const im=new Image(),t=setTimeout(()=>res(),900);im.onload=()=>{x.w=im.naturalWidth;x.h=im.naturalHeight;clearTimeout(t);res()};im.onerror=()=>{clearTimeout(t);res()};im.src=x.src})}
 async function arteApr(oid,i){const o=get(oid),l=o.ln[i],c=cli(o.cid);if(!l.arte)return alert('Anexe a arte antes de gerar o PDF de aprovação.');
   const f=await fget(l.arte.k);if(!f)return alert('Arquivo da arte não encontrado neste navegador.');
   let pgs;try{pgs=await arteImgs(f)}catch(e){return alert('Não consegui ler a arte: '+e.message)}
-  const r=o.it.find(x=>l.k.startsWith(x.rid+':')),av=(db.cfg.avs&&db.cfg.avs.length?db.cfg.avs:avs0());
+  await Promise.all(pgs.map(imgDims));
+  const r=o.it.find(x=>l.k.startsWith(x.rid+':')),av=(db.cfg.avs&&db.cfg.avs.length?db.cfg.avs:avs0()),k=(db.cfg.fmt&&db.cfg.fmt.arte)||'A4',[W,H]=PGD[k]||PGD.A4,av0=Math.round(H*(k=='A4'?.5:.45)),
+    lado=pgs.length==2&&pgs.every(x=>!x.w||x.h>=x.w*.95),dims=pgs.length==1?[W,av0]:lado?[Math.floor((W-6)/2),av0]:[W,Math.floor((av0-8)/2)],
+    im=pgs.map(x=>`<div style="text-align:center;page-break-inside:avoid"><b>${x.lb}</b><br><img src="${x.src}" style="max-width:${dims[0]}mm;max-height:${dims[1]}mm;border:1px solid #999"></div>`).join('');
   pr(`${hdr(`<b>APROVAÇÃO DE ARTE</b><br>Pedido nº ${o.n}<br>${dt(hoje())}`)}${cbox(c)}
-  <div class="bx"><b>Produto:</b> ${esc(l.d)}${r&&!r.kc?'<br><b>Quantidade:</b> '+fm(r.q)+' '+esc(r.u||''):''}<br><b>Previsão de entrega:</b> ${prevD(o)} (após a aprovação da arte)</div>
-  ${pgs.map(x=>`<div style="text-align:center;margin:8px 0;page-break-inside:avoid"><b>${x.lb}</b><br><img src="${x.src}" style="max-width:100%;max-height:105mm;border:1px solid #999"></div>`).join('')}
-  <div class="bx"><b>Leia antes de aprovar</b><ul>${av.map(a=>`<li>${esc(a)}</li>`).join('')}</ul></div>
-  <p><b>A arte acima está correta e autorizo a impressão?</b></p><p>☐ Sim, aprovo a arte como está &nbsp;&nbsp;&nbsp; ☐ Preciso de alterações: ______________________________</p>
-  <p>Nome: ____________________________ Data: ___/___/_____ Assinatura: ______________________</p>
-  <p class="mut">Aprovação pelo WhatsApp: responda "APROVADO" a esta mensagem.</p>`,'Aprovacao-arte-'+o.n+'-'+(i+1),'Olá'+(c?' '+c.nome:'')+'! Segue a arte do pedido nº '+o.n+' para aprovação em PDF. Confira tudo e responda APROVADO.',o,'arte')}
+  <div class="bx" style="margin:4px 0"><b>Produto:</b> ${esc(l.d)}${r&&!r.kc?'<br><b>Quantidade:</b> '+esc(qtdTxt(r)):''}<br><b>Previsão de entrega:</b> ${prevD(o)} (após a aprovação da arte)</div>
+  <div style="display:flex;${lado?'flex-direction:row;gap:6mm;':'flex-direction:column;gap:2mm;'}justify-content:center;align-items:center;margin:4px 0">${im}</div>
+  <div class="bx" style="margin:4px 0;font-size:8.5px"><b>Leia antes de aprovar</b><ul style="columns:2;column-gap:6mm;margin:2px 0 0;padding-left:14px">${av.map(a=>`<li style="break-inside:avoid">${esc(a)}</li>`).join('')}</ul></div>
+  <p style="margin:4px 0"><b>A arte acima está correta e autorizo a impressão?</b> &nbsp; ☐ Sim, aprovo a arte como está &nbsp; ☐ Preciso de alterações: ____________________</p>
+  <p style="margin:6px 0">Nome: ________________________ Data: ___/___/_____ Assinatura: ____________________ <span class="mut">· Aprovação pelo WhatsApp: responda "APROVADO".</span></p>`,'Aprovacao-arte-'+o.n+'-'+(i+1),'Olá'+(c?' '+c.nome:'')+'! Segue a arte do pedido nº '+o.n+' para aprovação em PDF. Confira tudo e responda APROVADO.',o,'arte')}
 
 /* PRODUÇÃO */
-let pfo='todos',pq2=null,cs='loja',cso=false,pmd=false;
+let pxo=new Set(),pxl=[],pfo='todos',pq2=null,cs='loja',cso=false,pmd=false;
 const bk=(o,l)=>{if(l.np)return null;const n=l.tl.length;if(n==0&&!unl(o))return 'lib';return n==0?'arte':n<=2?'fila':n==3?'prd':n==4?'aca':n==5?'fin':n==6?'rota':'ent'};
 const PCH=[['todos','Em andamento'],['lib','Aguardando liberação'],['arte','Aprovação de arte'],['fila','Fila'],['prd','Em produção'],['aca','Acabamento'],['fin','Finalizado'],['rota','Pronto / Em rota'],['ent','Entregue']];
 function vProc(){const base=db.orc.filter(o=>!o.venda&&o.ped&&!o.est&&!['recusado','arquivado'].includes(o.st)&&(!pq2||o.id==pq2));
   const cards=base.map(o=>{const ln=o.ln.map((l,i)=>[l,i]).sort((a,b)=>b[0].prio-a[0].prio);let sh;
     if(pfo=='todos')sh=done(o)?[]:ln;else if(pfo=='ent')sh=done(o)?ln:[];else sh=ln.filter(([l])=>bk(o,l)==pfo);
     return sh.length?[o,sh]:null}).filter(Boolean).sort((a,b)=>a[0].n-b[0].n);
+  pxl=cards.map(c=>c[0].id);
   return `<h3 style="margin:0 0 8px;font-size:16px">Produção</h3><div class="acts">${PCH.map(([k,t])=>`<button class="chip ${pfo==k?'on':''}" onclick="pfo='${k}';render()">${t}</button>`).join('')}</div>
   ${pq2?`<div class="acts" style="margin-top:6px"><span class="tag">Só o pedido nº ${(get(pq2)||{}).n}</span><button onclick="pq2=null;render()">Ver todos</button></div>`:''}
-  <div class="list">${cards.map(([o,sh])=>{const c=cli(o.cid),f=Math.max(0,tot(o)*ent()/100-paid(o));return `<div class="item s-${o.st}"><div class="row"><b>Pedido nº ${o.n} · ${esc(c?c.nome:'(sem cliente)')}</b><span class="mut">previsão ${prevD(o)}${unl(o)?'':' · <b style="color:#a3281f">aguardando liberação</b>'}</span></div><div class="acts" style="margin:4px 0"><button onclick="sendS(${o.id})">Enviar status ao cliente</button><button onclick="tab='ped';po=${o.id};render()">Abrir pedido</button></div>${sh.map(([l,i])=>vLn(o,l,i,f)).join('')}</div>`}).join('')||'<div class="item mut">Nenhum item nesta etapa.</div>'}</div>`}
+  <div class="acts" style="margin-top:6px"><button onclick="pxAll(1)">Expandir todos</button><button onclick="pxAll(0)">Recolher todos</button></div>
+  <div class="list">${cards.map(([o,sh])=>{const c=cli(o.cid),f=Math.max(0,tot(o)*ent()/100-paid(o)),open=pxo.has(o.id),cnt={};o.ln.forEach(l=>{const k=stg(o,l);cnt[k]=(cnt[k]||0)+1});
+    const oc=o.ln.some(x=>(x.oc||[]).some(y=>!y.r)),pr=o.ln.some(x=>x.prio);
+    return `<div class="item px s-${o.st}"><div class="hd" onclick="pxT(${o.id})"><b>${open?'▾':'▸'} Pedido nº ${o.n} · ${esc(c?c.nome:'(sem cliente)')}</b><span class="mut">previsão ${prevD(o)}</span></div><div class="mut" onclick="pxT(${o.id})" style="cursor:pointer">${o.ln.length} produto(s) · ${Object.entries(cnt).map(([k,v])=>k+(v>1?' ×'+v:'')).join(', ')}${unl(o)?'':' · <b style="color:#a3281f">aguardando liberação</b>'}${pr?' · ★ prioridade':''}${oc?' · <b style="color:#c98a00">⚠ ocorrência</b>':''}</div>${open?`<div class="acts" style="margin:6px 0"><button onclick="sendS(${o.id})">Enviar status ao cliente</button><button onclick="tab='ped';po=${o.id};render()">Abrir pedido</button></div>${sh.map(([l,i])=>vLn(o,l,i,f)).join('')}`:''}</div>`}).join('')||'<div class="item mut">Nenhum item nesta etapa.</div>'}</div>`}
+function pxT(id){if(pxo.has(id))pxo.delete(id);else pxo.add(id);render()}
+function pxAll(on){pxo=new Set(on?pxl:[]);render()}
 
 /* PRODUTOS, KITS E FORNECEDORES (ABAS INTERNAS) */
 let pt='prod',pq='',pcat=null,psub=null,pfl={},pcf={},pfx=false,pe=null,fq='',ffl='',fcf={},fx=false,cq='',cx='c',ce=null;
@@ -504,11 +576,13 @@ function vpWarn(t,id,q){const chk=(it,n)=>{if(!tracked(it)||(it.tipo||'un')!='un
 function stQty(o){const m={},add=(iid,q)=>{if(iid&&q>0)m[iid]=(m[iid]||0)+q};
   o.it.forEach(r=>{const it=db.it.find(x=>x.id==r.iid),k=db.kits.find(x=>x.id==r.kid);
     if(k)k.itens.forEach(c=>add(c.iid,c.q*(+r.q||0)));
-    else if(it){if(it.tipo=='lote'){const l=(it.lotes||[])[r.lq||0];add(it.id,l?l.q:0)}else if(it.tipo=='m2')add(it.id,(+r.ar||0)*(+r.q||0));else add(it.id,+r.q||0)}});
+    else if(it){if(it.tipo=='lote'){const l=(it.lotes||[])[r.lq||0];add(it.id,(l?l.q:0)*(+r.q||1))}else if(it.tipo=='m2')add(it.id,(+r.ar||0)*(+r.q||0));else add(it.id,+r.q||0)}});
   return Object.entries(m).map(([k,q])=>({iid:+k,q}))}
 function stockApply(o){if(o.sk)return;o.sk=stQty(o).filter(x=>tracked(db.it.find(y=>y.id==x.iid)));let neg=false;o.sk.forEach(x=>{const it=db.it.find(y=>y.id==x.iid);it.est=+((+it.est)-x.q).toFixed(4);if(it.est<0)neg=true});if(neg)o.neg=1}
 function stockRev(o){if(!o.sk)return;o.sk.forEach(x=>{const it=db.it.find(y=>y.id==x.iid);if(it&&tracked(it))it.est=+((+it.est)+x.q).toFixed(4)});delete o.sk;delete o.neg}
 function stockSync(o){if(o.sk){stockRev(o);stockApply(o)}}
+const rUn=r=>{const it=db.it.find(x=>x.id==r.iid);return it&&it.tipo=='lote'?'lote':r.u};
+const qtdTxt=r=>{const it=db.it.find(x=>x.id==r.iid);if(it&&it.tipo=='lote'){const l=(it.lotes||[])[r.lq||0];if(l){const q=+r.q||1;return q==1?fm(l.q)+' unidades':q+' lotes de '+fm(l.q)+' unidades ('+fm(q*l.q)+' no total)'}}return fm(r.q)+' '+(r.u||'')};
 const pcod=r=>{const it=db.it.find(x=>x.id==r.iid);return r.kid?'KIT':(it&&it.cod)||''};
 
 /* tabela com filtro por coluna */
@@ -517,7 +591,7 @@ function gridB(cols,rows,cf,act){const f=rows.filter(r=>cols.every(c=>{const q=n
 function grid(id,cols,rows,cf,act){return `<div style="overflow-x:auto"><table class="tb tbw"><thead><tr>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr><tr class="fr">${cols.map(c=>`<th><input data-k="${c[0]}" value="${esc(cf[c[0]]||'')}" oninput="${id}F(this)" placeholder="filtrar"></th>`).join('')}<th></th></tr></thead><tbody id="${id}-tb">${gridB(cols,rows,cf,act)}</tbody></table></div>`}
 
 /* produtos: lista */
-const prV=i=>i.tipo=='m2'?fmt(i.mp)+'/m²':i.tipo=='lote'?(i.lotes||[]).length+' lote(s)':fmt(i.preco),prP=i=>i.tipo=='lote'?'':(i.pr?fmt(i.pr)+(i.promoOn?' ✓':''):''),prC=i=>i.tipo=='m2'?(i.cm?fmt(i.cm):''):i.tipo=='lote'?'':(i.cp?fmt(i.cp):'');
+const prV=i=>i.tipo=='m2'?fmt(i.mp)+'/m²':i.tipo=='lote'?(i.lotes||[]).length+' lote(s)':fmt(i.preco),prP=i=>i.tipo=='lote'?((i.lotes||[]).some(l=>l.pr)?'por lote'+(i.promoOn?' ✓':''):''):(i.pr?fmt(i.pr)+(i.promoOn?' ✓':''):''),prC=i=>i.tipo=='m2'?(i.cm?fmt(i.cm):''):i.tipo=='lote'?'':(i.cp?fmt(i.cp):'');
 const estT=i=>tracked(i)?fm(i.est)+(i.est<0?' ⚠':''):i.semEst?'não usa':'—',prodT=i=>i.prod=='pronta'?'Sem produção':i.prod=='terc'?'Terceirizada'+(par(i.par)?' · '+par(i.par).nome:''):'Própria';
 const PC=[['cod','Cód.',i=>i.cod||''],['nome','Produto',i=>i.nome,'',i=>'<b>'+esc(i.nome)+'</b>'],['cat','Categoria',i=>i.cat||''],['sub','Subcategoria',i=>i.sub||''],['marca','Marca',i=>i.marca||''],['un','Un. / venda',i=>(i.un||'un')+' · '+TV[i.tipo||'un']],['preco','Venda',prV,'n'],['pr','Promo.',prP,'n'],['cp','Custo',prC,'n'],['est','Estoque',estT,'n',i=>tracked(i)&&i.est<=0?`<span style="color:#a3281f;font-weight:600">${esc(estT(i))}</span>`:esc(estT(i))],['prod','Produção',prodT]];
 const prAct=i=>`<button onclick="prPop(${i.id})">Editar</button><button onclick="prPop(null,${i.id})">Duplicar</button><button class="del" onclick="prDel(${i.id})">Excluir</button>`;
@@ -538,7 +612,7 @@ function prDel(id){if(confirm('Excluir produto?')){db.it=db.it.filter(x=>x.id!=i
 
 /* produtos: popup */
 function prPop(id,dup){const src=id?db.it.find(x=>x.id==id):dup?db.it.find(x=>x.id==dup):null,i=src||{},tp=i.tipo||'un',isD=!!dup,v=x=>esc(i[x]??'');
-  pe=id||null;dl=(i.lotes||[]).map(x=>({...x}));
+  pe=id||null;le=-1;dl=(i.lotes||[]).map(x=>({...x}));
   const cats=[...new Set(db.it.map(x=>x.cat).filter(Boolean))],marcas=[...new Set([...db.it.map(x=>x.marca),db.emp.nome].filter(Boolean))],pars=db.par.filter(x=>['Fornecedor','Parceira'].includes(x.tipo)||x.id==i.par),
     pv=tp=='m2'?i.mp:i.preco,pc=tp=='m2'?i.cm:i.cp,h=x=>x?'':'display:none';
   $('#dpr').innerHTML=`<div class="pagehd"><h3>${id?'Editar produto':isD?'Duplicar produto':'Novo produto'}</h3><button type="button" onclick="$('#dpr').close()" aria-label="Fechar" title="Fechar">✕</button></div>
@@ -548,13 +622,13 @@ function prPop(id,dup){const src=id?db.it.find(x=>x.id==id):dup?db.it.find(x=>x.
   <datalist id="pf-cl">${cats.map(c=>`<option value="${esc(c)}">`).join('')}</datalist><datalist id="pf-sl"></datalist>
   <label>Marca<input id="pf-mar" list="pf-ml" value="${v('marca')}" placeholder="Ex.: BIC, ou o nome da sua empresa" autocomplete="off"></label><datalist id="pf-ml">${marcas.map(m=>`<option value="${esc(m)}">`).join('')}</datalist>
   <div class="g2 np" style="${h(tp!='lote')}"><div><label><span id="pf-vl">${tp=='m2'?'Preço de venda por m² (R$)':'Preço de venda (R$)'}</span><input id="pf-v" type="number" step="any" min="0" value="${pv??''}" ${i.mk?'readonly':''}></label><label style="margin:0"><input type="checkbox" id="pf-mk" ${i.mk?'checked':''} onchange="pfMk()"> Calcular pelo markup (${+db.cfg.mk||0}%)</label></div>
-  <div><label>Preço promocional (R$)<input id="pf-pr" type="number" step="any" min="0" value="${i.tipo=='lote'?'':(i.pr??'')}"></label><label style="margin:0"><input type="checkbox" id="pf-po" ${i.promoOn?'checked':''}> Promoção ativa</label></div></div>
+  <div><label>Preço promocional (R$)<input id="pf-pr" type="number" step="any" min="0" value="${i.tipo=='lote'?'':(i.pr??'')}"></label></div></div><label style="margin:6px 0"><input type="checkbox" id="pf-po" ${i.promoOn?'checked':''}> Promoção ativa (usa o preço promocional${tp=='lote'?' de cada lote':''})</label>
   <div class="g2"><label class="np" style="${h(tp!='lote')}"><span id="pf-cl2">${tp=='m2'?'Preço de custo por m² (R$)':'Preço de custo (R$)'}</span><input id="pf-c" type="number" step="any" min="0" value="${pc??''}" oninput="pfMk()"></label>
   <div><label>Estoque<input id="pf-est" type="number" step="any" value="${isD?'':(i.est??'')}" ${i.semEst?'disabled':''}></label><label style="margin:0"><input type="checkbox" id="pf-se" ${i.semEst?'checked':''} onchange="pfSe()"> Não usa estoque</label></div></div>
   <div class="g2"><label>Unidade de medida<input id="pf-u" list="pf-ul" value="${esc(i.un||'un')}" autocomplete="off"></label><datalist id="pf-ul">${['un','cento','milheiro','m','m²','kg','cx','pç','folha','par'].map(u=>`<option value="${u}">`).join('')}</datalist>
   <label>Tipo de venda<select id="pf-tp" onchange="pfTp(this.value)"><option value="un">Por unidade / quantidade</option><option value="lote" ${tp=='lote'?'selected':''}>Lotes fixos (ex.: panfleto 1.000, 2.500...)</option><option value="m2" ${tp=='m2'?'selected':''}>Por metro quadrado (m²)</option></select></label></div>
   <div id="pf-m2" style="${h(tp=='m2')}"><label>Metragem mínima cobrada (m², ex.: 0,5 ou 1)<input id="pf-mm" type="number" step="any" value="${v('mm')}"></label></div>
-  <div id="pf-lt" style="${h(tp=='lote')}"><div class="mut">Cada lote tem valor, custo, prazo e promoção próprios.</div><div class="g2"><label>Quantidade do lote (ex.: 1000)<input id="l-q" type="number"></label><label>Valor do lote (R$)<input id="l-t" type="number" step="any"></label><label>Custo do lote (R$)<input id="l-c" type="number" step="any"></label><label>Prazo do lote (dias úteis)<input id="l-d" type="number"></label><label>Valor promocional do lote (R$)<input id="l-p" type="number" step="any"></label><label><br><button type="button" onclick="addL()">Adicionar lote</button></label></div><div id="l-list">${lotesH()}</div></div>
+  <div id="pf-lt" style="${h(tp=='lote')}"><div class="mut">Cada lote tem valor, custo, prazo e promoção próprios. O valor promocional só vale quando "Promoção ativa" está marcada.</div><div class="g2"><label>Quantidade do lote (ex.: 1000)<input id="l-q" type="number"></label><label>Valor do lote (R$)<input id="l-t" type="number" step="any"></label><label>Custo do lote (R$)<input id="l-c" type="number" step="any"></label><label>Prazo do lote (dias úteis)<input id="l-d" type="number"></label><label>Valor promocional do lote (R$)<input id="l-p" type="number" step="any"></label><label><br><button type="button" id="l-add" onclick="addL()">Adicionar lote</button> <button type="button" id="l-can" hidden onclick="cancelL()">Cancelar edição</button></label></div><div id="l-list">${lotesH()}</div></div>
   <div class="g2"><label>Tipo de produção<select id="pf-pd" onchange="pfPd()"><option value="local">Própria</option><option value="terc" ${i.prod=='terc'?'selected':''}>Terceirizada</option><option value="pronta" ${i.prod=='pronta'?'selected':''}>Sem produção (pronta entrega)</option></select></label>
   <label>Fornecedor<select id="pf-fo" ${i.prod=='terc'?'':'disabled'}><option value="">—</option>${pars.map(x=>`<option value="${x.id}" ${i.par==x.id?'selected':''}>${esc(x.nome)}</option>`).join('')}</select></label>
   <label>Prazo de produção (dias úteis)<input id="pf-d" type="number" value="${v('dias')}"></label></div>
@@ -566,8 +640,12 @@ function pfMk(){const a=$('#pf-mk').checked,e=$('#pf-v');e.readOnly=a;if(a)e.val
 function pfSe(){const a=$('#pf-se').checked,e=$('#pf-est');e.disabled=a;if(a)e.value=''}
 function pfPd(){$('#pf-fo').disabled=$('#pf-pd').value!='terc'}
 function pfTp(t){document.querySelectorAll('#dpr .np').forEach(e=>e.style.display=t=='lote'?'none':'');$('#pf-m2').style.display=t=='m2'?'':'none';$('#pf-lt').style.display=t=='lote'?'':'none';$('#pf-vl').textContent=t=='m2'?'Preço de venda por m² (R$)':'Preço de venda (R$)';$('#pf-cl2').textContent=t=='m2'?'Preço de custo por m² (R$)':'Preço de custo (R$)'}
-const lotesH=()=>dl.map((l,j)=>`<div class="row">${fm(l.q)} unid. · ${fmt(l.t)} · custo ${fmt(l.c)} · ${l.d||0} dias${l.pr?' · promo '+fmt(l.pr):''}<button class="del" type="button" onclick="dl.splice(${j},1);$('#l-list').innerHTML=lotesH()">✕</button></div>`).join('');
-function addL(){const q=+$('#l-q').value,t=+$('#l-t').value;if(!q||!t)return;dl.push({q,t,c:+$('#l-c').value||0,d:+$('#l-d').value||0,pr:+$('#l-p').value||0});dl.sort((a,b)=>a.q-b.q);['q','t','c','d','p'].forEach(x=>$('#l-'+x).value='');$('#l-list').innerHTML=lotesH()}
+let le=-1;
+const lotesH=()=>dl.map((l,j)=>`<div class="row" ${le==j?'style="background:#FFF2CC"':''}><span>${fm(l.q)} unid. · ${fmt(l.t)} · custo ${fmt(l.c)} · ${l.d||0} dias${l.pr?' · promo '+fmt(l.pr):''}</span><span class="acts"><button type="button" onclick="editL(${j})">Editar</button><button class="del" type="button" onclick="dl.splice(${j},1);le=-1;lReset();$('#l-list').innerHTML=lotesH()">✕</button></span></div>`).join('');
+function lReset(){['q','t','c','d','p'].forEach(x=>$('#l-'+x).value='');le=-1;$('#l-add').textContent='Adicionar lote';$('#l-can').hidden=true}
+function editL(j){const l=dl[j];if(!l)return;le=j;$('#l-q').value=l.q;$('#l-t').value=l.t;$('#l-c').value=l.c||'';$('#l-d').value=l.d||'';$('#l-p').value=l.pr||'';$('#l-add').textContent='Salvar lote';$('#l-can').hidden=false;$('#l-list').innerHTML=lotesH();$('#l-q').focus()}
+function cancelL(){lReset();$('#l-list').innerHTML=lotesH()}
+function addL(){const q=+$('#l-q').value,t=+$('#l-t').value;if(!q||!t)return;const o={q,t,c:+$('#l-c').value||0,d:+$('#l-d').value||0,pr:+$('#l-p').value||0};if(le>=0&&dl[le])dl[le]=o;else dl.push(o);dl.sort((a,b)=>a.q-b.q);lReset();$('#l-list').innerHTML=lotesH()}
 function prSave(){const tp=$('#pf-tp').value,g=x=>$('#pf-'+x).value.trim(),sem=$('#pf-se').checked,terc=$('#pf-pd').value=='terc',
   d={nome:g('n'),cat:g('cat'),sub:g('sub'),marca:g('mar'),tipo:tp,un:g('u')||'un',prod:$('#pf-pd').value,par:terc?(+$('#pf-fo').value||null):null,dias:+g('d')||0,promoOn:$('#pf-po').checked,obs:g('o'),semEst:sem,est:sem||g('est')===''?null:+g('est'),mk:$('#pf-mk').checked?1:0};
   if(!d.nome)return $('#pf-n').focus();
@@ -685,7 +763,7 @@ function vCfg(){const e=db.emp,F=[['nome','Nome da loja'],['end','Endereço'],['
   <div class="form"><b>Avisos da aprovação de arte</b><div class="mut">Um aviso por linha. Eles aparecem no PDF de aprovação de arte.</div><textarea rows="10" onchange="db.cfg.avs=this.value.split('\n').map(x=>x.trim()).filter(Boolean);save()">${esc((db.cfg.avs||[]).join('\n'))}</textarea><button onclick="db.cfg.avs=avs0();save();render()">Restaurar sugestão</button></div>
   <div class="form"><b>Cupom da venda</b><label>Texto no rodapé<input value="${esc(db.cfg.rod||'')}" onchange="db.cfg.rod=this.value;save()"></label></div>`,
   hist:()=>`<div class="form"><b>Histórico geral por número</b><div class="mut">Guarda todo número de venda, orçamento e pedido, mesmo apagado. Números não são reutilizados. Próximo número: <b>${db.seq}</b></div><input type="search" id="hq-i" placeholder="Buscar por número, cliente ou tipo" value="${esc(hqs)}" oninput="hqs=this.value;$('#hl').innerHTML=histL()"><div id="hl">${histL()}</div></div>`,
-  dados:()=>`<div class="form"><b>Backup</b><p class="mut">Os dados ficam neste navegador (os PDFs das artes também). Baixe um backup com frequência.</p><div class="acts"><button class="pri" onclick="exp()">Baixar backup</button><button onclick="$('#imp-f').click()">Restaurar backup</button><input id="imp-f" type="file" accept=".json" hidden onchange="imp(this.files[0])"><button class="del" onclick="zerar()">Zerar tudo</button></div><p class="mut">"Zerar tudo" apaga clientes, produtos, vendas, orçamentos, pedidos, artes e configurações, e reinicia a numeração em 1 (um backup é baixado antes).</p></div>`};
+  dados:()=>`<div class="form"><b>Backup</b><p class="mut">Versão do programa: <b>${APP_V}</b>. Os dados ficam neste navegador (os PDFs das artes também). Baixe um backup com frequência.</p><div class="acts"><button class="pri" onclick="exp()">Baixar backup</button><button onclick="$('#imp-f').click()">Restaurar backup</button><input id="imp-f" type="file" accept=".json" hidden onchange="imp(this.files[0])"><button class="del" onclick="zerar()">Zerar tudo</button></div><p class="mut">"Zerar tudo" apaga clientes, produtos, vendas, orçamentos, pedidos, artes e configurações, e reinicia a numeração em 1 (um backup é baixado antes). Se estiver conectado, o backup da conta Google também é apagado.</p><div id="bk-box">${bkH()}</div></div>`};
   if(!S[cs])cs='loja';
   return `<div class="cfg ${cso?'open':''}"><div class="cfgl">${CS.map(([k,t])=>`<button class="${cs==k?'on':''}" onclick="cs='${k}';cso=true;render()">${t}</button>`).join('')}</div><div class="cfgc"><button class="cfgb" onclick="cso=false;render()">← Seções</button>${S[cs]()}</div></div>`}
 function txPop(id){const x=db.tx.find(y=>y.id==id);if(!x)return;
@@ -695,7 +773,7 @@ function addX(){if(!$('#xn').value.trim())return;db.tx.push({id:db.id++,nome:$('
 function logo(f){if(!f)return;const r=new FileReader();r.onload=()=>{const i=new Image();i.onload=()=>{const s=Math.min(1,400/i.width),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);db.emp.logo=c.toDataURL('image/png');save();render()};i.src=r.result};r.readAsDataURL(f)}
 async function exp(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({...db,_files:await fall()})],{type:'application/json'}));a.download='gestao-grafica-backup-'+hoje()+'.json';a.click()}
 function imp(f){if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(!d.orc||!d.cli)throw 0;if(!confirm('Substituir os dados atuais pelo backup?'))return;const fl=d._files||{};delete d._files;db=norm(d);save();await fclr();for(const k in fl)await fput(k,fl[k]);render()}catch(e){alert('Arquivo de backup inválido.')}};r.readAsText(f)}
-async function zerar(){if(!confirm('Isso apaga TODOS os dados (clientes, produtos, vendas, orçamentos, pedidos, artes e configurações), reinicia a numeração em 1 e apaga o histórico de números. Um backup será baixado antes. Continuar?'))return;if(prompt('Para confirmar, digite ZERAR:')!=='ZERAR')return;await exp();localStorage.removeItem(K);await fclr();db=fresh();save();tab='ven';po=null;render()}
+async function zerar(){if(!confirm('Isso apaga TODOS os dados deste aparelho'+(BK.email?' e o backup da conta Google ('+BK.email+')':'')+' (clientes, produtos, vendas, orçamentos, pedidos, artes e configurações), reinicia a numeração em 1 e apaga o histórico de números. Um backup em arquivo será baixado antes. Deseja mesmo apagar?'))return;if(prompt('Digite APAGAR para continuar:')!=='APAGAR')return;await exp();if(BK.email){try{const t=await gTok(true);for(const f of await drList(t))await dr(DA+'/'+f.id,{method:'DELETE'},t)}catch(e){if(!confirm('Não foi possível apagar o backup da conta ('+e.message+'). Apagar só os dados deste aparelho?'))return}}localStorage.removeItem(K);await fclr();db=fresh();save();BK.hd=(await bkSnap()).h;BK.pend=0;BK.conf=0;bkSave();tab='ven';po=null;render()}
 {let g=null;try{g=localStorage.getItem('gg_nav')}catch(e){}$('#tabs').classList.toggle('sm',g==null?innerWidth<=720:g=='1')}
 render();
 </script>
