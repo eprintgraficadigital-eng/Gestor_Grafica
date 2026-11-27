@@ -146,7 +146,7 @@ async function fget(k){const d=await idb();return new Promise(s=>{const r=d.tran
 async function fall(){const d=await idb(),o={};return new Promise(s=>{const r=d.transaction('f').objectStore('f').openCursor();r.onsuccess=()=>{const c=r.result;if(c){o[c.key]=c.value;c.continue()}else s(o)}})}
 async function fclr(){const d=await idb();return new Promise(s=>{const t=d.transaction('f','readwrite');t.objectStore('f').clear();t.oncomplete=s})}
 /* BACKUP NA CONTA GOOGLE (DRIVE) E BACKUP AUTOMÁTICO - v2.3 */
-const GCID='COLE_AQUI_SEU_CLIENT_ID.apps.googleusercontent.com',GSC='https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email',BKF='gestao-grafica-backup.json',DA='https://www.googleapis.com/drive/v3/files',DU='https://www.googleapis.com/upload/drive/v3/files';
+const GCID='452005881922-cuo893gvm906msm2hejajfkat9obiu0b.apps.googleusercontent.com',GSC='https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email',BKF='gestao-grafica-backup.json',DA='https://www.googleapis.com/drive/v3/files',DU='https://www.googleapis.com/upload/drive/v3/files';
 const BK=Object.assign({auto:false,min:15,arq:false,amin:30,email:'',hd:'',hf:'',ts:0,tsf:0,tsc:0,pend:0,conf:0,msg:''},(()=>{try{return JSON.parse(localStorage.getItem('gg_bk'))||{}}catch(e){return{}}})());
 let bkTok=null,bkExp=0,bkBusy=false,bkDue=0,bkDir=null;
 const bkSave=()=>{try{localStorage.setItem('gg_bk',JSON.stringify(BK))}catch(e){}};
